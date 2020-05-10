@@ -30,10 +30,6 @@ class Model(dict):
             self.clear()
             return resp
 
-    def updateContact(self):
-        if self._id:
-            self.update(ObjectId(self._id), self)
-            self._id = str(self._id)
 
 class User(Model):
     db_client = pymongo.MongoClient('localhost', 27017)
