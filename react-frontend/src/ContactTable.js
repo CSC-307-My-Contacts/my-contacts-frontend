@@ -7,8 +7,6 @@ class ContactTable extends Component {
     }
 
     render() {
-        const { contact_list } = this.state
-
         const rows = this.state.contact_list.map((row, index) => {
             return (
                 <tr key={index}>
@@ -21,7 +19,9 @@ class ContactTable extends Component {
 
         return (
             <div className="container">
-                <tbody>{rows}</tbody>
+                <table className="table table-striped">
+                    <tbody>{rows}</tbody>
+                </table>
             </div>
         )
     }
