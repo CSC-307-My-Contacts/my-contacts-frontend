@@ -11,9 +11,9 @@ Style Guides
           }
         }
    3. In package.json, add the following code  
-        `code()
+        code(
          "lint-staged": {
           "src/**/*.{js,jsx,ts,tsx,json,css,scss,md}": [
               "prettier --write"
             ]
-          },''
+          }, )
