@@ -1,18 +1,24 @@
-# my-contacts
-Style Guides
+# My Contacts App
+__CSC 307 Project:__ Alex, Bailey, Ryan, Yogi
+
+## Style Guides
   * https://pypi.org/project/pycodestyle/
   * Prettier
-#Prettier Installation instructions
+### Prettier Installation instructions
    1.  run 'npm install --save husky lint-staged prettier' to install Prettier
    2. Add the following code to package.json
+   ```
 				"husky": {
           "hooks": {
             "pre-commit": "lint-staged"
           }
         }
+```
    3. In package.json, add the following code  
+   ```
          "lint-staged": {
           "src/**/*.{js,jsx,ts,tsx,json,css,scss,md}": [
               "prettier --write"
             ]
           },
+```
