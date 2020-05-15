@@ -1,6 +1,8 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
-import ContactTable from './ContactTable'
-import 'bootstrap/dist/css/bootstrap.css'
+import App from "./App";
 
-ReactDOM.render(<ContactTable />, document.getElementById('root'))
+import 'bootstrap/dist/css/bootstrap.css'
+import './index.css'
+
+ReactDOM.render(<App />, document.getElementById('root'))
