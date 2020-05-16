@@ -10,43 +10,32 @@ import {
 import Login from "./Login";
 import Register from "./Register";
 import Mission from "./Mission";
-
-const fakeAuth = {
-  isAuthenticated: false,
-  authenticate(cb) {
-    this.isAuthenticated = true;
-    cb();
-  },
-  signout(cb) {
-    this.isAuthenticated = false;
-    cb();
-  },
-};
+import axios from "axios";
 
 const Private = () => <h3>Private</h3>;
 
-const PrivateRoute = ({ component: Component, ...rest }) => (
+const PrivateRoute = ({
+  auth: isAuthenticated,
+  component: Component,
+  ...rest
+}) => (
   <Route
     {...rest}
     render={(props) =>
-      fakeAuth.isAuthenticated === true ? (
-        <Component {...props} />
-      ) : (
-        <Redirect to="/login" />
-      )
+      isAuthenticated() ? <Component {...props} /> : <Redirect to="/login" />
     }
   />
 );
 
-const AccountRoute = ({ component: Component, ...rest }) => (
+const AccountRoute = ({
+  auth: isAuthenticated,
+  component: Component,
+  ...rest
+}) => (
   <Route
     {...rest}
     render={(props) =>
-      fakeAuth.isAuthenticated !== true ? (
-        <Component {...props} />
-      ) : (
-        <Redirect to="/" />
-      )
+      !isAuthenticated() ? <Component {...props} /> : <Redirect to="/" />
     }
   />
 );
@@ -61,12 +50,30 @@ class App extends Component {
     super(props);
 
     this.authenticate = this.authenticate.bind(this);
+    this.isAuthenticated = this.isAuthenticated.bind(this);
   }
 
   authenticate = (id, cb) => {
     this.setState({ user: id });
-    fakeAuth.authenticate(cb);
+    cb();
   };
+
+  isAuthenticated() {
+    return this.state.user !== false;
+  }
+
+  fetchContacts() {
+    axios
+      .get("http://localhost:5000/api/" + this.state.user + "/contacts")
+      .then((res) => {
+        const contacts = res.data.contact_list;
+        this.setState({ contacts: contacts });
+      })
+      .catch(function (error) {
+        //Not handling the error. Just logging into the console.
+        console.log(error);
+      });
+  }
 
   render() {
     return (
@@ -79,17 +86,20 @@ class App extends Component {
         </div>
 
         <Switch>
-          <AccountRoute path="/login">
-            {" "}
-            <Login authenticate={this.authenticate} />{" "}
+          <AccountRoute auth={this.isAuthenticated} path="/login">
+            <Login authenticate={this.authenticate} />
           </AccountRoute>
-          <AccountRoute path="/register">
+          <AccountRoute auth={this.isAuthenticated} path="/register">
             <Register />
           </AccountRoute>
 
           <Route path="/mission" component={Mission} />
 
-          <PrivateRoute path="/" component={Private} />
+          <PrivateRoute
+            auth={this.isAuthenticated}
+            path="/"
+            component={Private}
+          />
         </Switch>
       </Router>
     );
