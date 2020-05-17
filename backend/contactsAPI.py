@@ -66,16 +66,16 @@ def add_contact(userId):
 @app.route('/login', methods=['POST'])
 def get_user():
     if request.method == 'POST':
-        user = None
+        user = request.get_json()['user']
 
-        possible_users = User().find_by_username(request.args.get('user')['username'])
-        password = request.args.get('user')['password']
+        possible_users = User().find_by_username(user['username'])
+        password = user['password']
 
         for possible_user in possible_users:
             if possible_user['password'] == password:
                 user = possible_user
 
-        if(user):
+        if (user):
             resp = Response()
             resp.status_code = 200
             resp.headers['WWW-Authenticate'] = 'Basic realm=Access to contacts'
@@ -85,9 +85,8 @@ def get_user():
 @app.route('/create_account', methods=['POST'])
 def create_user():
     if request.method == 'POST':
-        user = User(resquest.get_json())
-
-        possible_users = User().find_by_username(request.args.get('username'))
+        user = User(request.get_json())
+        possible_users = user.find_by_username(request.args.get('username'))
         if possible_users != []:
             return 403
 
