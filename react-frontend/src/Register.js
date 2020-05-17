@@ -41,7 +41,7 @@ class Register extends Component {
           <button
             className="btn btn-lg btn-primary btn-block"
             onClick={() => {
-              this.props.create_user(
+              this.props.createUser(
                 this.state.username,
                 this.state.password,
                 () => this.props.history.push("/")

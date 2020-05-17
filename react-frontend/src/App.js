@@ -46,7 +46,7 @@ class App extends Component {
       });
   };
 
-  create_user(username, password, cb) {
+  createUser(username, password, cb) {
     // passwords should be over https
     axios
       .post("http://localhost:5000/create_account", {
@@ -146,7 +146,7 @@ class App extends Component {
           <AccountRoute
             path="/register"
             component={Register}
-            create_user={this.create_user}
+            createUser={this.createUser}
           />
 
           <Route path="/mission" component={Mission} />
