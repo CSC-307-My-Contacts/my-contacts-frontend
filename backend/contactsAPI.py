@@ -71,13 +71,13 @@ def get_user():
         possible_users = User().find_by_username(user['username'])
         password = user['password']
 
+        db_user = None
         for possible_user in possible_users:
             if possible_user['password'] == password:
-                user = possible_user
+                db_user = possible_user
 
-        if (user):
-            resp = Response()
-            resp.status_code = 200
+        if (db_user):
+            resp = jsonify(db_user)
             resp.headers['WWW-Authenticate'] = 'Basic realm=Access to contacts'
             return resp
         return Response(status=401)
