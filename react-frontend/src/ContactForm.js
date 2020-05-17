@@ -72,16 +72,16 @@ class ContactForm extends Component {
             />
           </div>
           <hr />
-          <button
+          <input
             className="btn btn-primary btn-lg btn-block"
+            type="button"
+            value="Save Contact"
             onClick={() => {
               this.props.saveContact(this.state.contact, () =>
                 this.props.history.push("/")
               );
             }}
-          >
-            Save Contact
-          </button>
+          />
         </form>
       </div>
     );
