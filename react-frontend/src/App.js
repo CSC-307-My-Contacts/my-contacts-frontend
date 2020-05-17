@@ -6,39 +6,12 @@ import {
   Route,
   Switch,
 } from "react-router-dom";
+import axios from "axios";
 
 import Login from "./Login";
 import Register from "./Register";
 import Mission from "./Mission";
-import axios from "axios";
-
-const Private = () => <h3>Private</h3>;
-
-const PrivateRoute = ({
-  auth: isAuthenticated,
-  component: Component,
-  ...rest
-}) => (
-  <Route
-    {...rest}
-    render={(props) =>
-      isAuthenticated() ? <Component {...props} /> : <Redirect to="/login" />
-    }
-  />
-);
-
-const AccountRoute = ({
-  auth: isAuthenticated,
-  component: Component,
-  ...rest
-}) => (
-  <Route
-    {...rest}
-    render={(props) =>
-      !isAuthenticated() ? <Component {...props} /> : <Redirect to="/" />
-    }
-  />
-);
+import ContactList from "./ContactList";
 
 class App extends Component {
   state = {
@@ -54,20 +27,20 @@ class App extends Component {
   }
 
   authenticate = (id, cb) => {
-    this.setState({ user: id });
-    cb();
+    this.fetchContacts(id, cb);
   };
 
   isAuthenticated() {
     return this.state.user !== false;
   }
 
-  fetchContacts() {
+  fetchContacts(id, cb) {
     axios
-      .get("http://localhost:5000/api/" + this.state.user + "/contacts")
+      .get("http://localhost:5000/api/" + id + "/contacts")
       .then((res) => {
         const contacts = res.data.contact_list;
-        this.setState({ contacts: contacts });
+        this.setState({ contacts: contacts, user: id });
+        cb();
       })
       .catch(function (error) {
         //Not handling the error. Just logging into the console.
@@ -76,29 +49,48 @@ class App extends Component {
   }
 
   render() {
+    const PrivateRoute = ({ component: Component, ...rest }) => (
+      <Route
+        {...rest}
+        render={(props) =>
+          this.isAuthenticated() ? (
+            <Component {...props} {...rest} />
+          ) : (
+            <Redirect to="/login" />
+          )
+        }
+      />
+    );
+
+    const AccountRoute = ({ component: Component, ...rest }) => (
+      <Route
+        {...rest}
+        render={(props) =>
+          !this.isAuthenticated() ? (
+            <Component {...props} {...rest} />
+          ) : (
+            <Redirect to="/" />
+          )
+        }
+      />
+    );
+
     return (
       <Router>
-        <div>
-          For Development Only
-          <Link to="/"> Private</Link>
-          <Link to="/mission"> Public</Link>
-          user: {this.state.user}
-        </div>
-
         <Switch>
-          <AccountRoute auth={this.isAuthenticated} path="/login">
-            <Login authenticate={this.authenticate} />
-          </AccountRoute>
-          <AccountRoute auth={this.isAuthenticated} path="/register">
-            <Register />
-          </AccountRoute>
+          <AccountRoute
+            path="/login"
+            component={Login}
+            authenticate={this.authenticate}
+          />
+          <AccountRoute path="/register" component={Register} />
 
           <Route path="/mission" component={Mission} />
 
           <PrivateRoute
-            auth={this.isAuthenticated}
             path="/"
-            component={Private}
+            component={ContactList}
+            contacts={this.state.contacts}
           />
         </Switch>
       </Router>
