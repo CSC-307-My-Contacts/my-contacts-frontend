@@ -51,7 +51,7 @@ class App extends Component {
 
   saveContact(contact, cb) {
     axios
-      .post("http://localhost:5000/api/contact", {
+      .patch("http://localhost:5000/api/" + this.state.user.id + "/contacts/" + contact.id, {
         user: this.state.user,
         contact: contact,
       })
