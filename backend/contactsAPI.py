@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, Response
 from flask import request
 from flask import jsonify
 from flask_cors import CORS
@@ -11,7 +11,7 @@ app = Flask(__name__)
 # CORS stands for Cross Origin Requests.
 CORS(app)  # Here we'll allow requests coming from any domain. Not recommended for production environment.
 
-@app.route('/users/<userId>/contacts', methods=['POST', 'DELETE', 'PATCH', 'GET'])
+@app.route('/api/<userId>/contacts', methods=['POST', 'DELETE', 'PATCH', 'GET'])
 def get_contacts(userId):
     if request.method == 'GET':
         user = User({"_id": userId})
@@ -22,7 +22,7 @@ def get_contacts(userId):
 
 
 
-@app.route('/users/<userId>/contacts/<contactId>', methods=['POST', 'DELETE', 'PATCH', 'GET'])
+@app.route('/api/<userId>/contacts/<contactId>', methods=['POST', 'DELETE', 'PATCH', 'GET'])
 def get_contact(userId, contactId):
     if request.method == 'POST':
         return add_contact(userId)
@@ -68,18 +68,19 @@ def get_user():
     if request.method == 'POST':
         user = None
 
-        possible_users = User().find_by_username(request.args.get('username'))
-        password = request.args.get('password')
+        possible_users = User().find_by_username(request.args.get('user')['username'])
+        password = request.args.get('user')['password']
 
         for possible_user in possible_users:
             if possible_user['password'] == password:
                 user = possible_user
-       
+
         if(user):
-            resp = flask.Response()
-            resp.status_code = 401
+            resp = Response()
+            resp.status_code = 200
             resp.headers['WWW-Authenticate'] = 'Basic realm=Access to contacts'
             return resp
+        return Response(status=401)
 
 @app.route('/create_account', methods=['POST'])
 def create_user():
@@ -89,11 +90,13 @@ def create_user():
         possible_users = User().find_by_username(request.args.get('username'))
         if possible_users != []:
             return 403
-        
+
         user['contact_list'] = {}
-        resp = user.save()        
+        resp = user.save()
 
         if resp['n'] == 1:
             return jsonify(success=True), 201
         return {}, 204
 
+if __name__ == "__main__":
+    app.run()
