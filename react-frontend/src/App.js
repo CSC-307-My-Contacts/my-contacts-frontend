@@ -25,6 +25,7 @@ class App extends Component {
     this.authenticate = this.authenticate.bind(this);
     this.isAuthenticated = this.isAuthenticated.bind(this);
     this.saveContact = this.saveContact.bind(this);
+    this.logout = this.logout.bind(this);
   }
 
   authenticate = (id, cb) => {
@@ -48,6 +49,11 @@ class App extends Component {
 
   isAuthenticated() {
     return this.state.user !== false;
+  }
+
+  logout(cb) {
+    this.setState({ user: false, contacts: [] });
+    cb();
   }
 
   fetchContacts(id, cb) {
@@ -127,9 +133,7 @@ class App extends Component {
             authenticate={this.authenticate}
           />
           <AccountRoute path="/register" component={Register} />
-
           <Route path="/mission" component={Mission} />
-
           <PrivateRoute
             path="/create"
             component={ContactForm}
@@ -145,6 +149,7 @@ class App extends Component {
             path="/"
             component={ContactList}
             contacts={this.state.contacts}
+            logout={this.logout}
           />
         </Switch>
       </Router>
