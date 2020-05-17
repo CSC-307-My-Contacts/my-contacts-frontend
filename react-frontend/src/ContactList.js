@@ -1,13 +1,18 @@
-import React, { Component } from "react";
-import axios from "axios";
-import { Link } from "react-router-dom";
+import React from "react";
+import { Link, withRouter } from "react-router-dom";
 
 const ContactList = (props) => {
   const { contacts } = props;
 
   const rows = contacts.map((row, index) => {
     return (
-      <tr key={index}>
+      <tr
+        key={index}
+        onClick={() => {
+          props.history.push("/edit/" + row.id);
+        }}
+        className="pointer"
+      >
         <td>{row.name}</td>
         <td>{row.phone}</td>
         <td>{row.email}</td>
@@ -37,7 +42,7 @@ const ContactList = (props) => {
           </nav>
           <main role="main" className="col-md-9 ml-sm-auto col-lg-10 pt-3 px-4">
             <div className="table-responsive">
-              <table className="table table-striped">
+              <table className="table table-striped table-hover">
                 <thead>
                   <tr>
                     <th>Full Name</th>
@@ -55,4 +60,4 @@ const ContactList = (props) => {
   );
 };
 
-export default ContactList;
+export default withRouter(ContactList);

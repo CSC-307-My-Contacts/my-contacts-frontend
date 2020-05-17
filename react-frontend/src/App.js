@@ -1,7 +1,6 @@
 import React, { Component } from "react";
 import {
   BrowserRouter as Router,
-  Link,
   Redirect,
   Route,
   Switch,
@@ -12,6 +11,7 @@ import Login from "./Login";
 import Register from "./Register";
 import Mission from "./Mission";
 import ContactList from "./ContactList";
+import ContactForm from "./ContactForm";
 
 class App extends Component {
   state = {
@@ -24,6 +24,7 @@ class App extends Component {
 
     this.authenticate = this.authenticate.bind(this);
     this.isAuthenticated = this.isAuthenticated.bind(this);
+    this.saveContact = this.saveContact.bind(this);
   }
 
   authenticate = (id, cb) => {
@@ -44,6 +45,27 @@ class App extends Component {
       })
       .catch(function (error) {
         //Not handling the error. Just logging into the console.
+        console.log(error);
+      });
+  }
+
+  saveContact(contact, cb) {
+    axios
+      .post("http://localhost:5000/api/contact", {
+        user: this.state.user,
+        contact: contact,
+      })
+      .then((response) => {
+        if (response.status === 200) {
+          let { contacts } = this.state.contacts;
+          contacts = contacts
+            .filter((c) => c.id !== contact.id)
+            .push(response.data.contact);
+          this.setState({ contacts: contacts });
+          cb();
+        }
+      })
+      .catch((error) => {
         console.log(error);
       });
   }
@@ -87,6 +109,17 @@ class App extends Component {
 
           <Route path="/mission" component={Mission} />
 
+          <PrivateRoute
+            path="/create"
+            component={ContactForm}
+            saveContact={this.saveContact}
+          />
+          <PrivateRoute
+            path="/edit/:id"
+            component={ContactForm}
+            contacts={this.state.contacts}
+            saveContact={this.saveContact}
+          />
           <PrivateRoute
             path="/"
             component={ContactList}
