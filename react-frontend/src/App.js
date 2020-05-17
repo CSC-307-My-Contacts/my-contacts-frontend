@@ -27,24 +27,40 @@ class App extends Component {
     this.saveContact = this.saveContact.bind(this);
   }
 
-  authenticate = (id, cb) => {
+  authenticate = (username, password, cb) => {
     axios
       .post("http://localhost:5000/login", {
         user: {
-          id: id,
-          username: "test",
-          password: "test",
+          username: username,
+          password: password,
         },
       })
       .then((res) => {
         if (res.status === 200) {
-          this.fetchContacts(id, cb);
+          // id may not be properly defined
+          this.fetchContacts(res.data.id, cb);
         }
       })
       .catch((error) => {
         console.log(error);
       });
   };
+
+  create_user(username, password, cb) {
+    // passwords should be over https
+    axios
+      .post("http://localhost:5000/create_account", {
+        username: username,
+        password: password,
+      })
+      .then((res) => {
+        // no idea if this works
+        this.user = res.data.user;
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }
 
   isAuthenticated() {
     return this.state.user !== false;
@@ -56,6 +72,7 @@ class App extends Component {
       .then((res) => {
         const contacts = res.data.contact_list;
         this.setState({ contacts: contacts, user: id });
+        console.log(res.data);
         cb();
       })
       .catch(function (error) {
@@ -126,7 +143,11 @@ class App extends Component {
             component={Login}
             authenticate={this.authenticate}
           />
-          <AccountRoute path="/register" component={Register} />
+          <AccountRoute
+            path="/register"
+            component={Register}
+            create_user={this.create_user}
+          />
 
           <Route path="/mission" component={Mission} />
 
