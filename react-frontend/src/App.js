@@ -1,7 +1,6 @@
 import React, { Component } from "react";
 import {
   BrowserRouter as Router,
-  Link,
   Redirect,
   Route,
   Switch,
@@ -12,6 +11,7 @@ import Login from "./Login";
 import Register from "./Register";
 import Mission from "./Mission";
 import ContactList from "./ContactList";
+import ContactForm from "./ContactForm";
 
 class App extends Component {
   state = {
@@ -92,6 +92,7 @@ class App extends Component {
             component={ContactList}
             contacts={this.state.contacts}
           />
+          <PrivateRoute path="/create" component={ContactForm} />
         </Switch>
       </Router>
     );
