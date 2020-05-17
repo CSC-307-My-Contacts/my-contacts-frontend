@@ -28,7 +28,22 @@ class App extends Component {
   }
 
   authenticate = (id, cb) => {
-    this.fetchContacts(id, cb);
+    axios
+      .post("http://localhost:5000/login", {
+        user: {
+          id: id,
+          username: "test",
+          password: "test",
+        },
+      })
+      .then((res) => {
+        if (res.status === 200) {
+          this.fetchContacts(id, cb);
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   };
 
   isAuthenticated() {
@@ -51,10 +66,16 @@ class App extends Component {
 
   saveContact(contact, cb) {
     axios
-      .patch("http://localhost:5000/api/" + this.state.user.id + "/contacts/" + contact.id, {
-        user: this.state.user,
-        contact: contact,
-      })
+      .patch(
+        "http://localhost:5000/api/" +
+          this.state.user.id +
+          "/contacts/" +
+          contact.id,
+        {
+          user: this.state.user,
+          contact: contact,
+        }
+      )
       .then((response) => {
         if (response.status === 200) {
           let { contacts } = this.state.contacts;
