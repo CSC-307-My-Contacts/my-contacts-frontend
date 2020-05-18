@@ -12,12 +12,26 @@ body: {
 {
     contacts: [
         {
-            id: "contact ID",
+            uid: "contact ID",
             name: "name",
             email: "email",
             phone: "#####",
         }
         ...
     ]
+}
+```
+### `GET` http://{APIROOT}/login
+
+```JavaScript
+body: {
+    username: "username"
+    password: "password"
+}
+```
+
+```JavaScript
+{
+    token: "usertoken"
 }
 ```
