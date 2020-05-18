@@ -14,12 +14,14 @@ CORS(app)  # Here we'll allow requests coming from any domain. Not recommended f
 @app.route('/api/<userId>/contacts', methods=['POST', 'DELETE', 'PATCH', 'GET'])
 def get_contacts(userId):
     if request.method == 'GET':
-        user = User({"_id": userId})
-        user.reload()
+        resp = {}
+        #user = User({"_id": userId})
+        # For now, userid is actually the usernaem
+        user = User().find_by_username(userId)[0]
+        #user.reload()
         contact_ids  = user['contact_list']
-        resp = Contacts().find_by_ids(contact_ids)
-        return jsonify(contact, success=True), 200
-
+        resp['contact_list'] = Contacts().find_by_ids(contact_ids)
+        return jsonify(resp), 200
 
 
 @app.route('/api/<userId>/contacts/<contactId>', methods=['POST', 'DELETE', 'PATCH', 'GET'])
@@ -47,13 +49,15 @@ def get_contact(userId, contactId):
     if request.method == 'GET':
         contact = Contacts().find_by_id(contactId)
         if contact == []:
+            # TODO change to Response(status=404)
             return {}, 404
 
         return jsonify(contact, success=True), 200
 
 def add_contact(userId):
     if request.method == 'POST':
-        user = User({"_id": userId})
+        # TODO change to id
+        user = User({"username": userId})
         contactToAdd = request.get_json()
         newContact = Contacts(contactToAdd)
         resp = newContact.save()
@@ -72,6 +76,7 @@ def get_user():
         password = user['password']
 
         db_user = None
+        print(possible_users)
         for possible_user in possible_users:
             if possible_user['password'] == password:
                 db_user = possible_user
@@ -80,7 +85,7 @@ def get_user():
             resp = jsonify(db_user)
             resp.headers['WWW-Authenticate'] = 'Basic realm=Access to contacts'
             return resp
-        return Response(status=401)
+        return Response(status=403)
 
 @app.route('/create_account', methods=['POST'])
 def create_user():
