@@ -2,13 +2,13 @@
 
 ### `GET` http://{APIROOT}/
 
-```Json
+```JavaScript
 body: {
     token: user-token
 }
 ```
 
-```Json
+```JavaScript
 {
     contacts: [
         {
