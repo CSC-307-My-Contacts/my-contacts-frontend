@@ -23,7 +23,7 @@ Status-Code: 200
 }
 ```
 
-### `POST` http://{APIROOT}/login
+### `POST` http://{APIROOT}/{login|create}
 
 ```JavaScript
 body: {
