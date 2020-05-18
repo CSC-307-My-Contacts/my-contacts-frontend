@@ -64,3 +64,18 @@ body: {
 
 }
 ```
+
+### `DELETE` http://{APIROOT}/
+
+```JavaScript
+header: {
+    token: "user-token"
+},
+body: {
+    uid: "contact ID"
+}
+```
+
+```
+Status Code: 204
+```
