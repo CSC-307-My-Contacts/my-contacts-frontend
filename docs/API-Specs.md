@@ -9,6 +9,7 @@ header: {
 ```
 
 ```JavaScript
+Status-Code: 200
 {
     contacts: [
         {
@@ -32,6 +33,7 @@ body: {
 ```
 
 ```JavaScript
+Status-Code: 200
 {
     token: "user-token"
 }
