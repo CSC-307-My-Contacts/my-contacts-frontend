@@ -86,16 +86,18 @@ def get_user():
 def create_user():
     if request.method == 'POST':
         user = User(request.get_json())
-        possible_users = user.find_by_username(request.args.get('username'))
+        possible_users = user.find_by_username(user['username'])
         if possible_users != []:
-            return 403
+            return Response(status=403)
 
         user['contact_list'] = {}
-        resp = user.save()
+        user.save()
 
-        if resp['n'] == 1:
-            return jsonify(success=True), 201
-        return {}, 204
+        resp = user.find_by_username(user['username'])
+
+        if resp:
+            return jsonify(resp)
+        return {}, 400
 
 if __name__ == "__main__":
     app.run()
