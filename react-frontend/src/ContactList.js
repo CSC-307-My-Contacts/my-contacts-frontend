@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { Link, withRouter } from "react-router-dom";
 import Modal from "react-bootstrap/Modal";
 import Button from "react-bootstrap/Button";
@@ -105,7 +105,7 @@ class ContactList extends React.Component {
         </div>
 
         {contact !== false && (
-          <Modal show="true" onHide={this.handleClose} centered="true">
+          <Modal show={true} onHide={this.handleClose} centered="true">
             <Modal.Header closeButton>
               <Modal.Title>{contact.name}</Modal.Title>
             </Modal.Header>

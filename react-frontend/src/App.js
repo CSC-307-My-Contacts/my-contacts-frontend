@@ -75,6 +75,7 @@ class App extends Component {
   }
 
   saveContact(contact, cb) {
+    console.log(contact.name);
     axios
       .post("http://localhost:5000/api/" + this.state.user + "/contacts/", {
         user: this.state.user,
@@ -88,6 +89,21 @@ class App extends Component {
             .push(response.data.contact);
           this.setState({ contacts: contacts });
         }
+        cb();
+      })
+      .catch((error) => {
+        console.log(error);
+        cb();
+      });
+  }
+
+  deleteContact(cid, cb) {
+    axios
+      .delete("http://localhost:5000/delete/", {
+        user: this.state.user,
+        cid: cid,
+      })
+      .then((response) => {
         cb();
       })
       .catch((error) => {
