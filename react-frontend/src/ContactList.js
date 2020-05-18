@@ -19,7 +19,7 @@ class ContactList extends React.Component {
   }
 
   render() {
-    const { contacts, logout, history } = this.props;
+    const { contacts, logout, history, deleteContact } = this.props;
     const { contact } = this.state;
 
     const rows = contacts.map((row, index) => {
@@ -121,7 +121,12 @@ class ContactList extends React.Component {
               >
                 Edit
               </Button>
-              <Button variant="danger" onClick={this.handleClose}>
+              <Button
+                variant="danger"
+                onClick={() => {
+                  deleteContact(contact.id, this.handleClose);
+                }}
+              >
                 Delete
               </Button>
             </Modal.Footer>
