@@ -1,18 +1,22 @@
 import React, { Component } from "react";
-import { Link, withRouter } from "react-router-dom";
+import { withRouter } from "react-router-dom";
 
 class ContactForm extends Component {
   state = {
     type: "Create",
-    contact: {},
+    contact: {
+      name: "",
+      email: "",
+      phone: "",
+    },
   };
 
   handleChange = (event) => {
     const { name, value } = event.target;
+    let contact = this.state.contact;
+    contact[name] = value;
     this.setState({
-      contact: {
-        [name]: value,
-      },
+      contact: contact,
     });
   };
 
@@ -29,6 +33,7 @@ class ContactForm extends Component {
 
   render() {
     const { name, email, phone } = this.state.contact;
+    console.log(name, email);
 
     return (
       <div className="container contact-form">
