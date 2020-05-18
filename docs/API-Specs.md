@@ -54,6 +54,7 @@ body: {
 ```
 
 ```JavaScript
+Status-Code: 200
 {
     contact: {
         uid: "contact ID",
@@ -76,6 +77,6 @@ body: {
 }
 ```
 
-```
-Status Code: 204
+```JavaScript
+Status-Code: 204
 ```
