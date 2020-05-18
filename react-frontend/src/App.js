@@ -58,6 +58,7 @@ class App extends Component {
         this.user = res.data.user;
       })
       .catch((error) => {
+        // Needs to handle user already existing, 403 error
         console.log(error);
       });
   }
