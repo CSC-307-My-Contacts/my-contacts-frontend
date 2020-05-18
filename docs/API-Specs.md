@@ -3,8 +3,8 @@
 ### `GET` http://{APIROOT}/
 
 ```JavaScript
-body: {
-    token: user-token
+header: {
+    token: "user-token"
 }
 ```
 
@@ -16,22 +16,51 @@ body: {
             name: "name",
             email: "email",
             phone: "#####",
-        }
+        },
         ...
     ]
 }
 ```
+
 ### `POST` http://{APIROOT}/login
 
 ```JavaScript
 body: {
-    username: "username"
+    username: "username",
     password: "password"
 }
 ```
 
 ```JavaScript
 {
-    token: "usertoken"
+    token: "user-token"
+}
+```
+
+### `POST` http://{APIROOT}/
+
+```JavaScript
+header: {
+    token: "user-token"
+},
+body: {
+    contact: {
+        uid: "contact ID", // Optional
+        name: "name",
+        email: "email",
+        phone: "#####",
+    }
+}
+```
+
+```JavaScript
+{
+    contact: {
+        uid: "contact ID",
+        name: "name",
+        email: "email",
+        phone: "#####",
+    }
+
 }
 ```
