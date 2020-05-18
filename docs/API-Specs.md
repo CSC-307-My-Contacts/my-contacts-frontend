@@ -21,7 +21,7 @@ body: {
     ]
 }
 ```
-### `GET` http://{APIROOT}/login
+### `POST` http://{APIROOT}/login
 
 ```JavaScript
 body: {
