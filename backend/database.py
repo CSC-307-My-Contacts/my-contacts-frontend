@@ -57,9 +57,12 @@ class Contacts(Model):
         return contacts
 
     def find_by_ids(self, ids):
-        contacts = list()
-        allContacts = list(self.collection.find({}))
-        for x in range(len(allContacts)):
-            if ids[x] is allContacts[x]["_id"]:
-                contacts.append(allContacts[x])
+        contacts = []
+        for id in ids:
+            contacts = contacts + list(self.collection.find({'_id' : id}))
+        #allContacts = list(self.collection.find({}))
+        #for x in range(len(allContacts)):
+        #    print(x, ids)
+        #    if ids[x] is allContacts[x]["_id"]:
+        #        contacts.append(allContacts[x])
         return contacts
