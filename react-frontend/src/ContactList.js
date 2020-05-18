@@ -2,10 +2,17 @@ import React from "react";
 import { Link, withRouter } from "react-router-dom";
 import Modal from "react-bootstrap/Modal";
 import Button from "react-bootstrap/Button";
+import Table from "react-bootstrap/Table";
+import Container from "react-bootstrap/Container";
+import Row from "react-bootstrap/Row";
+import Navbar from "react-bootstrap/Navbar";
+import Form from "react-bootstrap/Form";
+import Nav from "react-bootstrap/Nav";
 
 class ContactList extends React.Component {
   state = {
     contact: false,
+    contactSearch: "",
   };
 
   constructor(props) {
@@ -18,11 +25,28 @@ class ContactList extends React.Component {
     this.setState({ contact: false });
   }
 
-  render() {
-    const { contacts, logout, history, deleteContact } = this.props;
-    const { contact } = this.state;
+  handleSearch = (event) => {
+    const { value } = event.target;
+    this.setState({ contactSearch: value });
+  };
 
-    const rows = contacts.map((row, index) => {
+  getDisplayContacts() {
+    return this.state.contactSearch
+      ? this.props.contacts.filter((c) => {
+          return (
+            c.name.toUpperCase().includes(value.toUpperCase()) ||
+            c.email.toUpperCase().includes(value.toUpperCase()) ||
+            c.phone.toUpperCase().includes(value.toUpperCase())
+          );
+        })
+      : this.props.contacts;
+  }
+
+  render() {
+    const { logout, history, deleteContact } = this.props;
+    const { contact, contactSearch } = this.state;
+
+    const rows = this.getDisplayContacts().map((row, index) => {
       return (
         <tr
           key={index}
@@ -40,47 +64,54 @@ class ContactList extends React.Component {
 
     return (
       <>
-        <nav className="navbar navbar-dark sticky-top bg-dark flex-md-nowrap p-0">
-          <span className="navbar-brand col-sm-3 col-md-2 mr-0">
+        <Navbar
+          variant="dark"
+          bg="dark"
+          className="sticky-top flex-md-nowrap p-0"
+        >
+          <Navbar.Brand className="col-sm-3 col-md-2 mr-0">
             My Contacts
-          </span>
-        </nav>
-        <div className="container-fluid">
-          <div className="row">
+          </Navbar.Brand>
+        </Navbar>
+        <Container fluid>
+          <Row>
             <nav className="col-md-2 d-none d-md-block bg-light sidebar">
               <div className="sidebar-sticky">
-                <form className="form-inline flex-md-nowrap px-3">
-                  <input
+                <div className="flex-md-nowrap px-3">
+                  <Form.Control
                     className="form-control w-100"
                     type="text"
                     placeholder="Search..."
                     aria-label="Search"
+                    name="contactSearch"
+                    value={contactSearch}
+                    onChange={this.handleSearch}
                   />
-                </form>
+                </div>
                 <hr />
-                <ul className="nav flex-column">
-                  <li className="nav-item px-3">
+                <Nav className="flex-column">
+                  <Nav.Item className="px-3">
                     <Link to={"/create"} style={{ textDecoration: "none" }}>
-                      <button className="btn btn-primary btn-block">
+                      <Button block variant="primary">
                         New Contact
-                      </button>
+                      </Button>
                     </Link>
-                  </li>
-                </ul>
+                  </Nav.Item>
+                </Nav>
                 <footer className="footer mb-3 mx-2">
-                  <ul className="nav flex-column">
-                    <li className="nav-item">
-                      <a
-                        href="#"
+                  <Nav className="flex-column">
+                    <Nav.Item>
+                      <Button
+                        variant="link"
                         className="nav-link text-muted"
                         onClick={() => {
                           logout(() => history.push("/"));
                         }}
                       >
                         Logout
-                      </a>
-                    </li>
-                  </ul>
+                      </Button>
+                    </Nav.Item>
+                  </Nav>
                 </footer>
               </div>
             </nav>
@@ -89,7 +120,7 @@ class ContactList extends React.Component {
               className="col-md-9 ml-sm-auto col-lg-10 pt-3 px-4"
             >
               <div className="table-responsive">
-                <table className="table table-striped table-hover">
+                <Table striped hover>
                   <thead>
                     <tr>
                       <th>Full Name</th>
@@ -98,11 +129,11 @@ class ContactList extends React.Component {
                     </tr>
                   </thead>
                   <tbody>{rows}</tbody>
-                </table>
+                </Table>
               </div>
             </main>
-          </div>
-        </div>
+          </Row>
+        </Container>
 
         {contact !== false && (
           <Modal show={true} onHide={this.handleClose} centered="true">
