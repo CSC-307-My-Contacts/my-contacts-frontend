@@ -26,6 +26,7 @@ class App extends Component {
     this.isAuthenticated = this.isAuthenticated.bind(this);
     this.saveContact = this.saveContact.bind(this);
     this.logout = this.logout.bind(this);
+    this.deleteContact = this.deleteContact.bind(this);
   }
 
   authenticate = (id, cb) => {
@@ -100,8 +101,11 @@ class App extends Component {
   deleteContact(cid, cb) {
     axios
       .delete("http://localhost:5000/delete/", {
-        user: this.state.user,
-        cid: cid,
+        headers: {},
+        data: {
+          user: this.state.user,
+          cid: cid,
+        },
       })
       .then((response) => {
         cb();
@@ -169,6 +173,7 @@ class App extends Component {
             component={ContactList}
             contacts={this.state.contacts}
             logout={this.logout}
+            deleteContact={this.deleteContact}
           />
         </Switch>
       </Router>

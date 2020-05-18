@@ -1,5 +1,8 @@
 import React, { Component } from "react";
 import { withRouter } from "react-router-dom";
+import Container from "react-bootstrap/Container";
+import Form from "react-bootstrap/Form";
+import Button from "react-bootstrap/Button";
 
 class ContactForm extends Component {
   state = {
@@ -36,59 +39,59 @@ class ContactForm extends Component {
     console.log(name, email);
 
     return (
-      <div className="container contact-form">
+      <Container className="contact-form">
         <div className="pt-5 text-center">
           <h2 className="mb-3">{this.state.type} Contact</h2>
         </div>
-        <form>
-          <div className="mb-3">
-            <label htmlFor="name">Full name</label>
-            <input
+        <Form>
+          <Form.Group className="mb-3">
+            <Form.Label htmlFor="name">Full name</Form.Label>
+            <Form.Control
               type="text"
-              className="form-control"
               id="name"
               name="name"
               value={name}
               onChange={this.handleChange}
             />
-          </div>
+          </Form.Group>
           <hr />
-          <div className="mb-3">
-            <label htmlFor="email">Email Address</label>
-            <input
+          <Form.Group className="mb-3">
+            <Form.Label htmlFor="email">Email Address</Form.Label>
+            <Form.Control
               type="email"
-              className="form-control"
               id="email"
               name="email"
               value={email}
               onChange={this.handleChange}
             />
-          </div>
+          </Form.Group>
 
-          <div className="mb-3">
-            <label htmlFor="phone">Phone Number</label>
-            <input
+          <Form.Group className="mb-3">
+            <Form.Label htmlFor="phone">Phone Number</Form.Label>
+            <Form.Control
               type="tel"
-              className="form-control"
               id="phone"
               name="phone"
               value={phone}
               onChange={this.handleChange}
             />
-          </div>
+          </Form.Group>
           <hr />
-          <input
-            className="btn btn-primary btn-lg btn-block"
-            type="button"
-            value="Save Contact"
+          <Button
+            variant="primary"
+            size="lg"
+            block
             onClick={() => {
               this.props.saveContact(this.state.contact, () =>
                 this.props.history.push("/")
               );
             }}
-          />
-        </form>
-      </div>
+          >
+            {" "}
+            Save Contact{" "}
+          </Button>
+        </Form>
+      </Container>
     );
   }
 }
