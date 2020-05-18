@@ -3,7 +3,8 @@ import { Link, withRouter } from "react-router-dom";
 
 class Register extends Component {
   state = {
-    uid: "",
+    username: "",
+    password: "",
   };
 
   handleChange = (event) => {
@@ -21,18 +22,29 @@ class Register extends Component {
           <h1 className="h3 mb-3 font-weight-normal">Register new account</h1>
           <input
             type="name"
-            id="uid"
-            name="uid"
+            id="username"
+            name="username"
             className="form-control mb-4"
             placeholder="User ID"
+            required=""
+            onChange={this.handleChange}
+          />
+          <input
+            type="password"
+            id="password"
+            name="password"
+            className="form-control mb-4"
+            placeholder="Password"
             required=""
             onChange={this.handleChange}
           />
           <button
             className="btn btn-lg btn-primary btn-block"
             onClick={() => {
-              this.props.authenticate(this.state.uid, () =>
-                this.props.history.push("/")
+              this.props.createUser(
+                this.state.username,
+                this.state.password,
+                () => this.props.history.push("/")
               );
             }}
           >

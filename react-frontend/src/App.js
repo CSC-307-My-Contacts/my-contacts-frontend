@@ -29,23 +29,41 @@ class App extends Component {
   }
 
   authenticate = (id, cb) => {
-    axios
+    /*axios
       .post("http://localhost:5000/login", {
         user: {
-          id: id,
-          username: "test",
-          password: "test",
+          username: username,
+          password: password,
         },
       })
       .then((res) => {
         if (res.status === 200) {
-          this.fetchContacts(id, cb);
+          // id may not be properly defined
+          this.fetchContacts(res.data.id, cb);
         }
       })
       .catch((error) => {
         console.log(error);
-      });
+      }); */
+    this.fetchContacts(id, cb);
   };
+
+  createUser(username, password, cb) {
+    // passwords should be over https
+    axios
+      .post("http://localhost:5000/create_account", {
+        username: username,
+        password: password,
+      })
+      .then((res) => {
+        // no idea if this works
+        this.user = res.data.user;
+      })
+      .catch((error) => {
+        // Needs to handle user already existing, 403 error
+        console.log(error);
+      });
+  }
 
   isAuthenticated() {
     return this.state.user !== false;
@@ -72,16 +90,10 @@ class App extends Component {
 
   saveContact(contact, cb) {
     axios
-      .patch(
-        "http://localhost:5000/api/" +
-          this.state.user.id +
-          "/contacts/" +
-          contact.id,
-        {
-          user: this.state.user,
-          contact: contact,
-        }
-      )
+      .post("http://localhost:5000/api/" + this.state.user + "/contacts/", {
+        user: this.state.user,
+        contact: contact,
+      })
       .then((response) => {
         if (response.status === 200) {
           let { contacts } = this.state.contacts;
@@ -132,7 +144,11 @@ class App extends Component {
             component={Login}
             authenticate={this.authenticate}
           />
-          <AccountRoute path="/register" component={Register} />
+          <AccountRoute
+            path="/register"
+            component={Register}
+            createUser={this.createUser}
+          />
           <Route path="/mission" component={Mission} />
           <PrivateRoute
             path="/create"
