@@ -24,13 +24,19 @@ def get_contacts(userId):
         return jsonify(resp), 200
 
 
-@app.route('/api/<userId>/contacts/<contactId>', methods=['POST', 'DELETE', 'PATCH', 'GET'])
-def get_contact(userId, contactId):
+@app.route('/api/<userId>/contacts/', methods=['POST', 'DELETE', 'PATCH', 'GET'])
+def get_contact(userId):
+    user = User({"username": userId})
+    contact = request.get_json()['contact']
+    print(request.get_json())
     if request.method == 'POST':
-        return add_contact(userId)
+        if 'id' not in contact or not contact['id']:
+            # Create new contact
+            return add_contact(user, contact)
+
 
     if request.method == 'DELETE':
-        user = User({"_id": userId})
+        # Needs to be fixed
         contacts = user['contact_list']
         contacts.remove(contactId)
         resp = user.reload()
@@ -39,6 +45,7 @@ def get_contact(userId, contactId):
         return {}, 204
 
     if request.method == 'PATCH':
+        # TODO fix this
         contactToUpdate = request.get_json()
         contactToUpdate = Contacts(contactToUpdate)
         resp = contactToUpdate.save()
@@ -46,25 +53,17 @@ def get_contact(userId, contactId):
             return jsonify(success=True), 200
         return {}, 204
 
-    if request.method == 'GET':
-        contact = Contacts().find_by_id(contactId)
-        if contact == []:
-            # TODO change to Response(status=404)
-            return {}, 404
-
         return jsonify(contact, success=True), 200
 
-def add_contact(userId):
+def add_contact(user, contactToAdd):
     if request.method == 'POST':
         # TODO change to id
-        user = User({"username": userId})
-        contactToAdd = request.get_json()
-        newContact = Contacts(contactToAdd)
-        resp = newContact.save()
-        user['contact_list'].append(str(newContact['_id']))
-        if resp["n"] == 1:
-            return jsonify(success=True), 200
-        return {}, 204
+        contact = Contacts(contactToAdd)
+        contact.save()
+
+        user['contact_list'].append(str(contact['_id']))
+
+        return jsonify(contact), 204
 
 
 @app.route('/login', methods=['POST'])

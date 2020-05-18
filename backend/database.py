@@ -59,6 +59,7 @@ class Contacts(Model):
     def find_by_ids(self, ids):
         contacts = []
         for id in ids:
+            # TODO THIS SHOULD BE DONE IN THE DATABASE
             contacts = contacts + list(self.collection.find({'_id' : id}))
         #allContacts = list(self.collection.find({}))
         #for x in range(len(allContacts)):
