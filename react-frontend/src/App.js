@@ -29,22 +29,6 @@ class App extends Component {
   }
 
   authenticate = (id, cb) => {
-    /*axios
-      .post("http://localhost:5000/login", {
-        user: {
-          username: username,
-          password: password,
-        },
-      })
-      .then((res) => {
-        if (res.status === 200) {
-          // id may not be properly defined
-          this.fetchContacts(res.data.id, cb);
-        }
-      })
-      .catch((error) => {
-        console.log(error);
-      }); */
     this.fetchContacts(id, cb);
   };
 
@@ -101,11 +85,12 @@ class App extends Component {
             .filter((c) => c.id !== contact.id)
             .push(response.data.contact);
           this.setState({ contacts: contacts });
-          cb();
         }
+        cb();
       })
       .catch((error) => {
         console.log(error);
+        cb();
       });
   }
 
