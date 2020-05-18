@@ -13,20 +13,25 @@ class Model(dict):
     def save(self):
         if not self._id:
             self.collection.insert(self)
+            self.uid = str(self._id)
         else:
             self.collection.update(
-                {"_id": ObjectId(self._id)}, self)
-        self._id = str(self._id)
+                    {"uid": self.uid}, self)
+            self.uid = str(self._id)
+        self.reload()
 
     def reload(self):
-        if self._id:
-            self.update(self.collection \
-                        .find_one({"_id": ObjectId(self._id)}))
-            self._id = str(self._id)
+        if self.uid:
+            result = self.collection.find_one({"uid": self.uid})
+            if result :
+                #self.update(result)
+                self.uid = str(self.uid)
+                return True
+        return False
 
     def remove(self):
-        if self._id:
-            resp = self.collection.remove({"_id": ObjectId(self._id)})
+        if self.uid:
+            resp = self.collection.remove({"uid": ObjectId(self.uid)})
             self.clear()
             return resp
 
@@ -35,35 +40,44 @@ class User(Model):
     db_client = pymongo.MongoClient('localhost', 27017)
     collection = db_client["MyContactsApp"]["users_list"]
 
-    def find_all(self):
-        users = list(self.collection.find())
-        for user in users:
-            user["_id"] = str(user["_id"])
-        return users
-
     def find_by_username(self, username):
-        users = list(self.collection.find({"username": username}))
-        return users
+        return User(self.collection.find_one({"username": username}))
+
+    def find_by_token(self, token):
+        return User(self.collection.find_one({"token": token}))
+
+    def fetch_contacts(self):
+        return Contacts().find_by_ids(self['contact_list'])
+
+
 
 
 class Contacts(Model):
     db_client = pymongo.MongoClient('localhost', 27017)
     collection = db_client["MyContactsApp"]["contacts_list"]
 
+    def exists(self, id):
+        if find_by_id(id):
+            return True
+        return False
+
     def find_by_id(self, id):
-        contacts = list(self.collection.find({"_id": id}))
-        for contact in contacts:
-            contact["_id"] = str(contact["_id"])
-        return contacts
+        contact = self.collection.find_one({"uid": id})
+        return Contacts(contact)
 
     def find_by_ids(self, ids):
         contacts = []
         for id in ids:
-            # TODO THIS SHOULD BE DONE IN THE DATABASE
-            contacts = contacts + list(self.collection.find({'_id' : id}))
-        #allContacts = list(self.collection.find({}))
-        #for x in range(len(allContacts)):
-        #    print(x, ids)
-        #    if ids[x] is allContacts[x]["_id"]:
-        #        contacts.append(allContacts[x])
+            contacts = contacts + list(self.collection.find({'uid' : id}))
         return contacts
+
+    def find_by_names(self, names):
+        # This is bad
+        contacts = []
+        for name in names:
+            contacts = contacts + list(self.collection.find({'name' : name}))
+
+        for contact in contacts:
+            contact['_id'] = str(contact['_id'])
+        return contacts
+

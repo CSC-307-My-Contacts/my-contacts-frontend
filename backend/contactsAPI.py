@@ -11,97 +11,58 @@ app = Flask(__name__)
 # CORS stands for Cross Origin Requests.
 CORS(app)  # Here we'll allow requests coming from any domain. Not recommended for production environment.
 
-@app.route('/api/<userId>/contacts', methods=['POST', 'DELETE', 'PATCH', 'GET'])
-def get_contacts(userId):
+
+@app.route('/', methods=['GET', 'POST', 'DELETE'])
+def get_contacts():
+    token = request.headers.get('token')
+
+    user = User().find_by_token(token)
+
+
     if request.method == 'GET':
-        resp = {}
-        #user = User({"_id": userId})
-        # For now, userid is actually the usernaem
-        user = User().find_by_username(userId)[0]
-        #user.reload()
-        contact_ids  = user['contact_list']
-        resp['contact_list'] = Contacts().find_by_ids(contact_ids)
-        return jsonify(resp), 200
+        return jsonify(user.fetch_contacts())
 
+    contact = Contacts(request.get_json()['contact'])
 
-@app.route('/api/<userId>/contacts/', methods=['POST', 'DELETE', 'PATCH', 'GET'])
-def get_contact(userId):
-    user = User({"username": userId})
-    contact = request.get_json()['contact']
-    print(request.get_json())
     if request.method == 'POST':
-        if 'id' not in contact or not contact['id']:
-            # Create new contact
-            return add_contact(user, contact)
-
+        user['contact_list'].append(contact['uid'])
+        contact.save()
+        user.save()
+        return jsonify(contact)
 
     if request.method == 'DELETE':
-        # Needs to be fixed
-        contacts = user['contact_list']
-        contacts.remove(contactId)
-        resp = user.reload()
-        if resp["n"] == 1:
-            return jsonify(success=True), 200
-        return {}, 204
-
-    if request.method == 'PATCH':
-        # TODO fix this
-        contactToUpdate = request.get_json()
-        contactToUpdate = Contacts(contactToUpdate)
-        resp = contactToUpdate.save()
-        if resp["n"] == 1:
-            return jsonify(success=True), 200
-        return {}, 204
-
-        return jsonify(contact, success=True), 200
-
-def add_contact(user, contactToAdd):
-    if request.method == 'POST':
-        # TODO change to id
-        contact = Contacts(contactToAdd)
-        contact.save()
-
-        user['contact_list'].append(str(contact['_id']))
-
-        return jsonify(contact), 204
-
+        user['contact_list'] = list(filter(user['contact_list'], lambda u: u.uid == contact['uid']))
+        contact.remove()
+        user.save()
+        return Response(status=200)
 
 @app.route('/login', methods=['POST'])
-def get_user():
+def login():
     if request.method == 'POST':
-        user = request.get_json()['user']
+        requested_user = request.get_json()
 
-        possible_users = User().find_by_username(user['username'])
-        password = user['password']
+        user = User().find_by_username(user['username'])
+        if requested_user['password'] == user['password']:
+            return jsonify(user['token'])
+        #resp.headers['WWW-Authenticate'] = 'Basic realm=Access to contacts'
+        return Response(403)
 
-        db_user = None
-        print(possible_users)
-        for possible_user in possible_users:
-            if possible_user['password'] == password:
-                db_user = possible_user
 
-        if (db_user):
-            resp = jsonify(db_user)
-            resp.headers['WWW-Authenticate'] = 'Basic realm=Access to contacts'
-            return resp
-        return Response(status=403)
 
-@app.route('/create_account', methods=['POST'])
+@app.route('/create', methods=['POST'])
 def create_user():
     if request.method == 'POST':
         user = User(request.get_json())
+
         possible_users = user.find_by_username(user['username'])
         if possible_users != []:
             return Response(status=403)
 
-        user['contact_list'] = {}
+        user['token'] = hash(user['password'])
+        user['contact_list'] = []
         user.save()
 
-        resp = user.find_by_username(user['username'])
-
-        if resp:
-            return jsonify(resp)
-        return {}, 400
+        return jsonify(user['token'])
 
 if __name__ == "__main__":
     app.run()
