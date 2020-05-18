@@ -27,8 +27,8 @@ class App extends Component {
     this.saveContact = this.saveContact.bind(this);
   }
 
-  authenticate = (username, password, cb) => {
-    axios
+  authenticate = (uid, cb) => {
+    /*axios
       .post("http://localhost:5000/login", {
         user: {
           username: username,
@@ -43,7 +43,8 @@ class App extends Component {
       })
       .catch((error) => {
         console.log(error);
-      });
+      }); */
+    this.fetchContacts(uid, cb);
   };
 
   createUser(username, password, cb) {
