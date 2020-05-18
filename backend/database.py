@@ -56,11 +56,6 @@ class Contacts(Model):
     db_client = pymongo.MongoClient('localhost', 27017)
     collection = db_client["MyContactsApp"]["contacts_list"]
 
-    def exists(self, id):
-        if find_by_id(id):
-            return True
-        return False
-
     def find_by_id(self, id):
         contact = self.collection.find_one({"uid": id})
         return Contacts(contact)
@@ -69,15 +64,5 @@ class Contacts(Model):
         contacts = []
         for id in ids:
             contacts = contacts + list(self.collection.find({'uid' : id}))
-        return contacts
-
-    def find_by_names(self, names):
-        # This is bad
-        contacts = []
-        for name in names:
-            contacts = contacts + list(self.collection.find({'name' : name}))
-
-        for contact in contacts:
-            contact['_id'] = str(contact['_id'])
         return contacts
 
