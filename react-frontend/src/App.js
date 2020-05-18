@@ -27,7 +27,7 @@ class App extends Component {
     this.saveContact = this.saveContact.bind(this);
   }
 
-  authenticate = (uid, cb) => {
+  authenticate = (id, cb) => {
     /*axios
       .post("http://localhost:5000/login", {
         user: {
@@ -44,7 +44,7 @@ class App extends Component {
       .catch((error) => {
         console.log(error);
       }); */
-    this.fetchContacts(uid, cb);
+    this.fetchContacts(id, cb);
   };
 
   createUser(username, password, cb) {
@@ -84,13 +84,10 @@ class App extends Component {
 
   saveContact(contact, cb) {
     axios
-      .post(
-        "http://localhost:5000/api/" + this.state.user.user + "/contacts/",
-        {
-          user: this.state.user,
-          contact: contact,
-        }
-      )
+      .post("http://localhost:5000/api/" + this.state.user + "/contacts/", {
+        user: this.state.user,
+        contact: contact,
+      })
       .then((response) => {
         if (response.status === 200) {
           let { contacts } = this.state.contacts;
