@@ -74,7 +74,6 @@ class App extends Component {
       .then((res) => {
         const contacts = res.data.contact_list;
         this.setState({ contacts: contacts, user: id });
-        console.log(res.data);
         cb();
       })
       .catch(function (error) {
@@ -85,11 +84,8 @@ class App extends Component {
 
   saveContact(contact, cb) {
     axios
-      .patch(
-        "http://localhost:5000/api/" +
-          this.state.user.id +
-          "/contacts/" +
-          contact.id,
+      .post(
+        "http://localhost:5000/api/" + this.state.user.user + "/contacts/",
         {
           user: this.state.user,
           contact: contact,
