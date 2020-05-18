@@ -30,7 +30,7 @@ class ContactList extends React.Component {
     this.setState({ contactSearch: value });
   };
 
-  getDisplayContacts() {
+  getDisplayContacts(value) {
     return this.state.contactSearch
       ? this.props.contacts.filter((c) => {
           return (
@@ -46,7 +46,7 @@ class ContactList extends React.Component {
     const { logout, history, deleteContact } = this.props;
     const { contact, contactSearch } = this.state;
 
-    const rows = this.getDisplayContacts().map((row, index) => {
+    const rows = this.getDisplayContacts(contactSearch).map((row, index) => {
       return (
         <tr
           key={index}
