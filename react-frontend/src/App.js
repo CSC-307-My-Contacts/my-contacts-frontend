@@ -41,11 +41,13 @@ class App extends Component {
       })
       .then((res) => {
         // no idea if this works
-        this.user = res.data.user;
+        this.state.user = res.data.user;
+        cb();
       })
       .catch((error) => {
         // Needs to handle user already existing, 403 error
         console.log(error);
+        cb(); // This is bad, needs to error properly
       });
   }
 
@@ -106,6 +108,7 @@ class App extends Component {
       })
       .catch((error) => {
         console.log(error);
+        cb();
       });
   }
 
