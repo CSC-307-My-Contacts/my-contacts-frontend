@@ -61,16 +61,21 @@ body {
   bottom: 0;
 }
 
-.form-signin input[type="text"] {
+.input-group-top {
   margin-bottom: -1px;
   border-bottom-right-radius: 0;
   border-bottom-left-radius: 0;
   padding: 10px;
 }
 
-.form-signin input[type="password"] {
+.input-group-bottom {
   margin-bottom: 10px;
   border-top-left-radius: 0;
   border-top-right-radius: 0;
   padding: 10px;
+}
+
+.signin-img {
+  width: 72px;
+  height: 72px;
 }
