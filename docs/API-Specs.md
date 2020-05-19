@@ -23,22 +23,6 @@ Status-Code: 200
 }
 ```
 
-### `POST` http://{APIROOT}/{login|create}
-
-```JavaScript
-body: {
-    username: "username",
-    password: "password"
-}
-```
-
-```JavaScript
-Status-Code: 200
-{
-    token: "user-token"
-}
-```
-
 ### `POST` http://{APIROOT}/
 
 ```JavaScript
@@ -67,6 +51,27 @@ Status-Code: 200
 
 }
 ```
+### `POST` http://{APIROOT}/{login|create}
+
+```JavaScript
+body: {
+    username: "username",
+    password: "password"
+}
+```
+
+On success:
+```JavaScript
+Status-Code: 200
+{
+    token: "user-token"
+}
+```
+On failure:
+```JavaScript
+Status-Code: 403
+```
+
 
 ### `DELETE` http://{APIROOT}/
 
