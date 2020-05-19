@@ -16,43 +16,74 @@ import ContactForm from "./ContactForm";
 class App extends Component {
   state = {
     user: false,
+    token: false,
     contacts: [],
   };
 
   constructor(props) {
     super(props);
 
-    this.authenticate = this.authenticate.bind(this);
-    this.isAuthenticated = this.isAuthenticated.bind(this);
-    this.saveContact = this.saveContact.bind(this);
+    this.login = this.login.bind(this);
     this.logout = this.logout.bind(this);
+    this.isLoggedIn = this.isLoggedIn.bind(this);
+    this.registerUser = this.registerUser.bind(this);
+    this.saveContact = this.saveContact.bind(this);
     this.deleteContact = this.deleteContact.bind(this);
   }
 
-  authenticate = (id, cb) => {
-    this.fetchContacts(id, cb);
-  };
-
-  createUser(username, password, cb) {
-    // passwords should be over https
+  tokenRequest(username, password, callback, type) {
     axios
-      .post("http://localhost:5000/create_account", {
+      .post("http://localhost:5000/" + type, {
         username: username,
         password: password,
       })
       .then((res) => {
-        // no idea if this works
-        this.state.user = res.data.user;
-        cb();
+        if (res.status === 200) {
+          this.setState({ token: res.data.token });
+          callback(false);
+        } else {
+          callback(false);
+        }
       })
       .catch((error) => {
-        // Needs to handle user already existing, 403 error
         console.log(error);
-        cb(); // This is bad, needs to error properly
+        callback(false);
       });
   }
 
-  isAuthenticated() {
+  contactsRequest(callback) {
+    axios
+      .get("http://localhost:5000/", {
+        headers: { token: this.state.token },
+      })
+      .then((res) => {
+        const contacts = res.data.contact_list;
+        this.setState({ contacts: contacts });
+        callback();
+      })
+      .catch(function (error) {
+        //Not handling the error. Just logging into the console.
+        console.log(error);
+      });
+  }
+
+  saveContact(contact, cb) {}
+
+  deleteContact(cid, cb) {}
+
+  login(username, password, callback) {
+    this.tokenRequest(
+      username,
+      password,
+      (success) => {
+        if (success) this.contactsRequest(callback);
+        else callback(false);
+      },
+      "login"
+    );
+  }
+
+  isLoggedIn() {
     return this.state.user !== false;
   }
 
@@ -61,59 +92,8 @@ class App extends Component {
     cb();
   }
 
-  fetchContacts(id, cb) {
-    axios
-      .get("http://localhost:5000/api/" + id + "/contacts")
-      .then((res) => {
-        const contacts = res.data.contact_list;
-        this.setState({ contacts: contacts, user: id });
-        cb();
-      })
-      .catch(function (error) {
-        //Not handling the error. Just logging into the console.
-        console.log(error);
-      });
-  }
-
-  saveContact(contact, cb) {
-    console.log(contact.name);
-    axios
-      .post("http://localhost:5000/api/" + this.state.user + "/contacts/", {
-        user: this.state.user,
-        contact: contact,
-      })
-      .then((response) => {
-        if (response.status === 200) {
-          let { contacts } = this.state.contacts;
-          contacts = contacts
-            .filter((c) => c.id !== contact.id)
-            .push(response.data.contact);
-          this.setState({ contacts: contacts });
-        }
-        cb();
-      })
-      .catch((error) => {
-        console.log(error);
-        cb();
-      });
-  }
-
-  deleteContact(cid, cb) {
-    axios
-      .delete("http://localhost:5000/delete/", {
-        headers: {},
-        data: {
-          user: this.state.user,
-          cid: cid,
-        },
-      })
-      .then((response) => {
-        cb();
-      })
-      .catch((error) => {
-        console.log(error);
-        cb();
-      });
+  registerUser(username, password, callback) {
+    this.tokenRequest(username, password, callback, "create");
   }
 
   render() {
@@ -121,7 +101,7 @@ class App extends Component {
       <Route
         {...rest}
         render={(props) =>
-          this.isAuthenticated() ? (
+          this.isLoggedIn() ? (
             <Component {...props} {...rest} />
           ) : (
             <Redirect to="/login" />
@@ -134,7 +114,7 @@ class App extends Component {
       <Route
         {...rest}
         render={(props) =>
-          !this.isAuthenticated() ? (
+          !this.isLoggedIn() ? (
             <Component {...props} {...rest} />
           ) : (
             <Redirect to="/" />
@@ -146,15 +126,11 @@ class App extends Component {
     return (
       <Router>
         <Switch>
-          <AccountRoute
-            path="/login"
-            component={Login}
-            authenticate={this.authenticate}
-          />
+          <AccountRoute path="/login" component={Login} login={this.login} />
           <AccountRoute
             path="/register"
             component={Register}
-            createUser={this.createUser}
+            registerUser={this.registerUser}
           />
           <Route path="/mission" component={Mission} />
           <PrivateRoute

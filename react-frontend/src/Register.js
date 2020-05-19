@@ -1,5 +1,7 @@
 import React, { Component } from "react";
 import { Link, withRouter } from "react-router-dom";
+import Form from "react-bootstrap/Form";
+import Button from "react-bootstrap/Button";
 
 class Register extends Component {
   state = {
@@ -20,36 +22,34 @@ class Register extends Component {
       <div className="center-contents h-100">
         <div className="form-signin text-center">
           <h1 className="h3 mb-3 font-weight-normal">Register new account</h1>
-          <input
-            type="name"
-            id="username"
+          <Form.Control
+            type="text"
             name="username"
-            className="form-control mb-4"
-            placeholder="User ID"
-            required=""
+            placeholder="Username"
             onChange={this.handleChange}
           />
-          <input
+          <Form.Control
             type="password"
-            id="password"
             name="password"
-            className="form-control mb-4"
             placeholder="Password"
-            required=""
             onChange={this.handleChange}
           />
-          <button
-            className="btn btn-lg btn-primary btn-block"
+          <Button
+            variant="primary"
+            size="lg"
+            block
             onClick={() => {
-              this.props.createUser(
+              this.props.registerUser(
                 this.state.username,
                 this.state.password,
-                () => this.props.history.push("/")
+                (success) => {
+                  if (success) this.props.history.push("/");
+                }
               );
             }}
           >
             Register
-          </button>
+          </Button>
           <p className="text-muted mt-3">
             Already have an account? <Link to="/login">Login</Link>
           </p>
