@@ -14,13 +14,19 @@ import ContactList from "./ContactList";
 import ContactForm from "./ContactForm";
 
 class App extends Component {
-  state = {
+  API_ROOT = "http://localhost:5000/";
+  API_LOGIN = "login";
+  API_CREATE = "create";
+
+  LOGGED_OUT_STATE = {
     token: false,
     contacts: [],
   };
 
   constructor(props) {
     super(props);
+
+    this.state = this.LOGGED_OUT_STATE;
 
     this.login = this.login.bind(this);
     this.logout = this.logout.bind(this);
@@ -32,7 +38,7 @@ class App extends Component {
 
   tokenRequest(type, username, password, callback) {
     axios
-      .post("http://localhost:5000/" + type, {
+      .post(this.API_ROOT + type, {
         username: username,
         password: password,
       })
@@ -52,10 +58,11 @@ class App extends Component {
 
   contactsRequest() {
     axios
-      .get("http://localhost:5000/", {
+      .get(this.API_ROOT, {
         headers: { token: this.state.token },
       })
       .then((res) => {
+        console.log(res);
         const contacts = res.data.contacts;
         this.setState({ contacts: contacts });
       })
@@ -68,7 +75,7 @@ class App extends Component {
   saveContactRequest(contact, callback) {
     axios
       .post(
-        "http://localhost:5000/",
+        this.API_ROOT,
         {
           contact: contact,
         },
@@ -90,7 +97,7 @@ class App extends Component {
   deleteContact(cid, cb) {}
 
   login(username, password, callbackFailure) {
-    this.tokenRequest("login", username, password, (success) => {
+    this.tokenRequest(this.API_LOGIN, username, password, (success) => {
       if (success) this.contactsRequest();
       else callbackFailure();
     });
@@ -101,11 +108,11 @@ class App extends Component {
   }
 
   logout() {
-    this.setState({ token: false, contacts: [] });
+    this.setState(this.LOGGED_OUT_STATE);
   }
 
   registerUser(username, password, callbackFailure) {
-    this.tokenRequest("create", username, password, (result) => {
+    this.tokenRequest(this.API_CREATE, username, password, (result) => {
       if (!result) callbackFailure();
     });
   }
@@ -169,7 +176,7 @@ class App extends Component {
             saveContact={this.saveContact}
           />
           <PrivateRoute
-            path="/edit/:id"
+            path="/edit/:uid"
             component={ContactForm}
             contacts={this.state.contacts}
             saveContact={this.saveContact}
