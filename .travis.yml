@@ -5,8 +5,10 @@ node_js:
 
 # command to install dependencies
 install:
+  - cd react-frontend
   - npm install
 
 # command to run build
 script:
+  - cd react-frontend
   - npm run build
