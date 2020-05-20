@@ -14,60 +14,57 @@ import ContactList from "./ContactList";
 import ContactForm from "./ContactForm";
 
 class App extends Component {
-  state = {
-    user: false,
+  API_ROOT = "http://localhost:5000/";
+  API_LOGIN = "login";
+  API_CREATE = "create";
+
+  LOGGED_OUT_STATE = {
+    token: false,
     contacts: [],
   };
 
   constructor(props) {
     super(props);
 
-    this.authenticate = this.authenticate.bind(this);
-    this.isAuthenticated = this.isAuthenticated.bind(this);
-    this.saveContact = this.saveContact.bind(this);
+    this.state = this.LOGGED_OUT_STATE;
+
+    this.login = this.login.bind(this);
     this.logout = this.logout.bind(this);
+    this.isLoggedIn = this.isLoggedIn.bind(this);
+    this.registerUser = this.registerUser.bind(this);
+    this.saveContact = this.saveContact.bind(this);
     this.deleteContact = this.deleteContact.bind(this);
   }
 
-  authenticate = (id, cb) => {
-    this.fetchContacts(id, cb);
-  };
-
-  createUser(username, password, cb) {
-    // passwords should be over https
+  tokenRequest(type, username, password, callback) {
     axios
-      .post("http://localhost:5000/create_account", {
+      .post(this.API_ROOT + type, {
         username: username,
         password: password,
       })
       .then((res) => {
-        // no idea if this works
-        this.state.user = res.data.user;
-        cb();
+        if (res.status === 200) {
+          this.setState({ token: res.data.token });
+          callback(true);
+        } else {
+          callback(false);
+        }
       })
       .catch((error) => {
-        // Needs to handle user already existing, 403 error
         console.log(error);
-        cb(); // This is bad, needs to error properly
+        callback(false);
       });
   }
 
-  isAuthenticated() {
-    return this.state.user !== false;
-  }
-
-  logout(cb) {
-    this.setState({ user: false, contacts: [] });
-    cb();
-  }
-
-  fetchContacts(id, cb) {
+  contactsRequest() {
     axios
-      .get("http://localhost:5000/api/" + id + "/contacts")
+      .get(this.API_ROOT, {
+        headers: { token: this.state.token },
+      })
       .then((res) => {
-        const contacts = res.data.contact_list;
-        this.setState({ contacts: contacts, user: id });
-        cb();
+        console.log(res);
+        const contacts = res.data.contacts;
+        this.setState({ contacts: contacts });
       })
       .catch(function (error) {
         //Not handling the error. Just logging into the console.
@@ -75,45 +72,65 @@ class App extends Component {
       });
   }
 
-  saveContact(contact, cb) {
-    console.log(contact.name);
+  saveContactRequest(contact, callback) {
     axios
-      .post("http://localhost:5000/api/" + this.state.user + "/contacts/", {
-        user: this.state.user,
-        contact: contact,
-      })
-      .then((response) => {
-        if (response.status === 200) {
-          let { contacts } = this.state.contacts;
-          contacts = contacts
-            .filter((c) => c.id !== contact.id)
-            .push(response.data.contact);
-          this.setState({ contacts: contacts });
+      .post(
+        this.API_ROOT,
+        {
+          contact: contact,
+        },
+        {
+          headers: { token: this.state.token },
         }
-        cb();
+      )
+      .then((res) => {
+        if (res.status === 200) {
+          callback(res.data.contact);
+        }
       })
-      .catch((error) => {
+      .catch(function (error) {
+        //Not handling the error. Just logging into the console.
         console.log(error);
-        cb();
       });
   }
 
-  deleteContact(cid, cb) {
-    axios
-      .delete("http://localhost:5000/delete/", {
-        headers: {},
-        data: {
-          user: this.state.user,
-          cid: cid,
-        },
-      })
-      .then((response) => {
-        cb();
-      })
-      .catch((error) => {
-        console.log(error);
-        cb();
+  deleteContact(cid, cb) {}
+
+  login(username, password, callbackFailure) {
+    this.tokenRequest(this.API_LOGIN, username, password, (success) => {
+      if (success) this.contactsRequest();
+      else callbackFailure();
+    });
+  }
+
+  isLoggedIn() {
+    return this.state.token !== false;
+  }
+
+  logout() {
+    this.setState(this.LOGGED_OUT_STATE);
+  }
+
+  registerUser(username, password, callbackFailure) {
+    this.tokenRequest(this.API_CREATE, username, password, (result) => {
+      if (!result) callbackFailure();
+    });
+  }
+
+  saveContact(contact, callback) {
+    this.saveContactRequest(contact, (c) => {
+      console.log(c);
+      const contacts = this.state.contacts;
+      this.setState({
+        contacts: [
+          ...contacts.filter((con) => {
+            return con.uid !== c.uid;
+          }),
+          c,
+        ],
       });
+      callback();
+    });
   }
 
   render() {
@@ -121,7 +138,7 @@ class App extends Component {
       <Route
         {...rest}
         render={(props) =>
-          this.isAuthenticated() ? (
+          this.isLoggedIn() ? (
             <Component {...props} {...rest} />
           ) : (
             <Redirect to="/login" />
@@ -134,7 +151,7 @@ class App extends Component {
       <Route
         {...rest}
         render={(props) =>
-          !this.isAuthenticated() ? (
+          !this.isLoggedIn() ? (
             <Component {...props} {...rest} />
           ) : (
             <Redirect to="/" />
@@ -146,15 +163,11 @@ class App extends Component {
     return (
       <Router>
         <Switch>
-          <AccountRoute
-            path="/login"
-            component={Login}
-            authenticate={this.authenticate}
-          />
+          <AccountRoute path="/login" component={Login} login={this.login} />
           <AccountRoute
             path="/register"
             component={Register}
-            createUser={this.createUser}
+            registerUser={this.registerUser}
           />
           <Route path="/mission" component={Mission} />
           <PrivateRoute
@@ -163,7 +176,7 @@ class App extends Component {
             saveContact={this.saveContact}
           />
           <PrivateRoute
-            path="/edit/:id"
+            path="/edit/:uid"
             component={ContactForm}
             contacts={this.state.contacts}
             saveContact={this.saveContact}

@@ -60,3 +60,22 @@ body {
   position: absolute;
   bottom: 0;
 }
+
+.input-group-top {
+  margin-bottom: -1px;
+  border-bottom-right-radius: 0;
+  border-bottom-left-radius: 0;
+  padding: 10px;
+}
+
+.input-group-bottom {
+  margin-bottom: 10px;
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+  padding: 10px;
+}
+
+.signin-img {
+  width: 72px;
+  height: 72px;
+}
