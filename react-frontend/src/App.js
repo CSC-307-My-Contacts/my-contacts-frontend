@@ -15,7 +15,6 @@ import ContactForm from "./ContactForm";
 
 class App extends Component {
   state = {
-    user: false,
     token: false,
     contacts: [],
   };
@@ -31,7 +30,7 @@ class App extends Component {
     this.deleteContact = this.deleteContact.bind(this);
   }
 
-  tokenRequest(username, password, callback, type) {
+  tokenRequest(type, username, password, callbackFailure) {
     axios
       .post("http://localhost:5000/" + type, {
         username: username,
@@ -40,26 +39,24 @@ class App extends Component {
       .then((res) => {
         if (res.status === 200) {
           this.setState({ token: res.data.token });
-          callback(false);
         } else {
-          callback(false);
+          callbackFailure();
         }
       })
       .catch((error) => {
         console.log(error);
-        callback(false);
+        callbackFailure();
       });
   }
 
-  contactsRequest(callback) {
+  contactsRequest() {
     axios
       .get("http://localhost:5000/", {
         headers: { token: this.state.token },
       })
       .then((res) => {
-        const contacts = res.data.contact_list;
+        const contacts = res.data.contacts;
         this.setState({ contacts: contacts });
-        callback();
       })
       .catch(function (error) {
         //Not handling the error. Just logging into the console.
@@ -67,33 +64,62 @@ class App extends Component {
       });
   }
 
-  saveContact(contact, cb) {}
+  saveContactRequest(contact, callback) {
+    axios
+      .post(
+        "http://localhost:5000/",
+        {
+          contact: contact,
+        },
+        {
+          headers: { token: this.state.token },
+        }
+      )
+      .then((res) => {
+        if (res.status === 200) {
+          callback(res.data.contact);
+        }
+      })
+      .catch(function (error) {
+        //Not handling the error. Just logging into the console.
+        console.log(error);
+      });
+  }
 
   deleteContact(cid, cb) {}
 
-  login(username, password, callback) {
-    this.tokenRequest(
-      username,
-      password,
-      (success) => {
-        if (success) this.contactsRequest(callback);
-        else callback(false);
-      },
-      "login"
-    );
+  login(username, password, callbackFailure) {
+    this.tokenRequest("login", username, password, (success) => {
+      if (success) this.contactsRequest();
+      else callbackFailure();
+    });
   }
 
   isLoggedIn() {
-    return this.state.user !== false;
+    return this.state.token !== false;
   }
 
-  logout(cb) {
-    this.setState({ user: false, contacts: [] });
-    cb();
+  logout() {
+    this.setState({ token: false, contacts: [] });
   }
 
-  registerUser(username, password, callback) {
-    this.tokenRequest(username, password, callback, "create");
+  registerUser(username, password, callbackFailure) {
+    this.tokenRequest("create", username, password, callbackFailure);
+  }
+
+  saveContact(contact, callback) {
+    this.saveContactRequest(contact, (c) => {
+      const contacts = this.state.contacts;
+      this.setState({
+        contacts: [
+          ...contacts.filter((con) => {
+            return con.uid !== c.uid;
+          }),
+          c,
+        ],
+      });
+      callback();
+    });
   }
 
   render() {

@@ -70,6 +70,7 @@ class ContactList extends React.Component {
           className="sticky-top flex-md-nowrap p-0"
         >
           <Navbar.Brand className="col-sm-3 col-md-2 mr-0">
+            <img src="/logo192.png" width="30" height="30" className="mb-1" />{" "}
             My Contacts
           </Navbar.Brand>
         </Navbar>
@@ -104,9 +105,7 @@ class ContactList extends React.Component {
                       <Button
                         variant="link"
                         className="nav-link text-muted"
-                        onClick={() => {
-                          logout(() => history.push("/"));
-                        }}
+                        onClick={logout}
                       >
                         Logout
                       </Button>
