@@ -30,7 +30,7 @@ class App extends Component {
     this.deleteContact = this.deleteContact.bind(this);
   }
 
-  tokenRequest(type, username, password, callbackFailure) {
+  tokenRequest(type, username, password, callback) {
     axios
       .post("http://localhost:5000/" + type, {
         username: username,
@@ -39,13 +39,14 @@ class App extends Component {
       .then((res) => {
         if (res.status === 200) {
           this.setState({ token: res.data.token });
+          callback(true);
         } else {
-          callbackFailure();
+          callback(false);
         }
       })
       .catch((error) => {
         console.log(error);
-        callbackFailure();
+        callback(false);
       });
   }
 
@@ -104,11 +105,14 @@ class App extends Component {
   }
 
   registerUser(username, password, callbackFailure) {
-    this.tokenRequest("create", username, password, callbackFailure);
+    this.tokenRequest("create", username, password, (result) => {
+      if (!result) callbackFailure();
+    });
   }
 
   saveContact(contact, callback) {
     this.saveContactRequest(contact, (c) => {
+      console.log(c);
       const contacts = this.state.contacts;
       this.setState({
         contacts: [
