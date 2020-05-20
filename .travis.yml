@@ -10,5 +10,4 @@ install:
 
 # command to run build
 script:
-  - cd react-frontend
   - npm run build
