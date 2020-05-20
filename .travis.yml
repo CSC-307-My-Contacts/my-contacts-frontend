@@ -1,0 +1,12 @@
+language: node_js
+
+node_js:
+  - 12
+
+# command to install dependencies
+install:
+  - npm install
+
+# command to run build
+script:
+  - npm run build
