@@ -1,0 +1,13 @@
+language: node_js
+
+node_js:
+  - 12
+
+# command to install dependencies
+install:
+  - cd react-frontend
+  - npm install
+
+# command to run build
+script:
+  - npm run build
