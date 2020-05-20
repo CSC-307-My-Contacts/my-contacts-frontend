@@ -1,32 +1,23 @@
-# My Contacts App
+# My Contacts App (Front End) [![Build Status](https://travis-ci.org/CSC-307-My-Contacts/my-contacts.svg?branch=develop)](https://travis-ci.org/CSC-307-My-Contacts/my-contacts)
 
 __CSC 307 Project:__ Alex, Bailey, Ryan, Yogi
 
-## Style Guides
+## Building and Running
 
-* [https://pypi.org/project/pycodestyle/]
+To install dependencies run `npm install` from the react-frontend directrory. 
+
+```bash
+$ cd react-frontend
+$ npm install
+```
+
+For development run `npm start` from the react-frontend directrory. 
+
+```bash
+$ cd react-frontend
+$ npm start
+```
+
+## Style Guide
+
 * Prettier
-
-### Prettier Installation instructions
-
-1. run `npm install --save husky lint-staged prettier` to install Prettier
-2. Add the following code to package.json
-
-  ```JSON
-  "husky": {
-    "hooks": {
-      "pre-commit": "lint-staged"
-    }
-  }
-  ```
-
-3. In package.json, add the following code
-
-  ```JSON
-  "lint-staged": {
-    "src/**/*.{js,jsx,ts,tsx,json,css,scss,md}": [
-      "prettier --write"
-      ]
-  },
-  ```
-  
