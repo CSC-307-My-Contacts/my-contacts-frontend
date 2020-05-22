@@ -13,7 +13,7 @@ Status-Code: 200
 {
     contacts: [
         {
-            uid: "contact ID",
+            _id: "contact ID",
             name: "name",
             email: "email",
             phone: "#####",
@@ -31,7 +31,7 @@ header: {
 },
 body: {
     contact: {
-        uid: "contact ID", // Optional
+        _id: "contact ID", // Optional
         name: "name",
         email: "email",
         phone: "#####",
@@ -43,7 +43,7 @@ body: {
 Status-Code: 200
 {
     contact: {
-        uid: "contact ID",
+        _id: "contact ID",
         name: "name",
         email: "email",
         phone: "#####",
@@ -80,7 +80,7 @@ header: {
     token: "user-token"
 },
 body: {
-    uid: "contact ID"
+    _id: "contact ID"
 }
 ```
 
