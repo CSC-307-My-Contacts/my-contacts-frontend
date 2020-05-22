@@ -1,4 +1,4 @@
-# My Contacts App (Front End) [![Build Status](https://travis-ci.org/CSC-307-My-Contacts/my-contacts.svg?branch=develop)](https://travis-ci.org/CSC-307-My-Contacts/my-contacts)
+# My Contacts App (Front End) [![Build Status](https://travis-ci.org/CSC-307-My-Contacts/my-contacts-frontend.svg?branch=develop)](https://travis-ci.org/CSC-307-My-Contacts/my-contacts)
 
 __CSC 307 Project:__ Alex, Bailey, Ryan, Yogi
 
