@@ -24,10 +24,10 @@ class ContactForm extends Component {
   };
 
   componentDidMount() {
-    if (this.props.match.params.uid) {
+    if (this.props.match.params.id) {
       this.setState({
         contact: this.props.contacts.find(
-          (contact) => contact.uid === this.props.match.params.uid
+          (contact) => contact._id === this.props.match.params.id
         ),
         type: "Edit",
       });

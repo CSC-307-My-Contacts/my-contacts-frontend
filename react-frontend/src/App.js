@@ -124,7 +124,7 @@ class App extends Component {
       this.setState({
         contacts: [
           ...contacts.filter((con) => {
-            return con.uid !== c.uid;
+            return con._id !== c._id;
           }),
           c,
         ],
@@ -176,7 +176,7 @@ class App extends Component {
             saveContact={this.saveContact}
           />
           <PrivateRoute
-            path="/edit/:uid"
+            path="/edit/:id"
             component={ContactForm}
             contacts={this.state.contacts}
             saveContact={this.saveContact}
