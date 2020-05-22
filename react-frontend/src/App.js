@@ -94,7 +94,34 @@ class App extends Component {
       });
   }
 
-  deleteContact(cid, cb) {}
+  deleteContactRequest(id, callback) {
+    axios
+      .delete(this.API_ROOT, {
+        headers: { token: this.state.token },
+        data: { _id: id },
+      })
+      .then((res) => {
+        if (res.status === 204) {
+          callback();
+        }
+      })
+      .catch(function (error) {
+        //Not handling the error. Just logging into the console.
+        console.log(error);
+      });
+  }
+
+  deleteContact(id, callback) {
+    this.deleteContactRequest(id, () => {
+      const contacts = this.state.contacts;
+      this.setState({
+        contacts: contacts.filter((c) => {
+          return c._id !== id;
+        }),
+      });
+      callback();
+    });
+  }
 
   login(username, password, callbackFailure) {
     this.tokenRequest(this.API_LOGIN, username, password, (success) => {
@@ -124,7 +151,7 @@ class App extends Component {
       this.setState({
         contacts: [
           ...contacts.filter((con) => {
-            return con.uid !== c.uid;
+            return con._id !== c._id;
           }),
           c,
         ],
@@ -176,7 +203,7 @@ class App extends Component {
             saveContact={this.saveContact}
           />
           <PrivateRoute
-            path="/edit/:uid"
+            path="/edit/:id"
             component={ContactForm}
             contacts={this.state.contacts}
             saveContact={this.saveContact}

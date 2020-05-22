@@ -153,14 +153,14 @@ class ContactList extends React.Component {
             <Modal.Footer>
               <Button
                 variant="secondary"
-                onClick={() => history.push("/edit/" + contact.uid)}
+                onClick={() => history.push("/edit/" + contact._id)}
               >
                 Edit
               </Button>
               <Button
                 variant="danger"
                 onClick={() => {
-                  deleteContact(contact.uid, this.handleClose);
+                  deleteContact(contact._id, this.handleClose);
                 }}
               >
                 Delete
