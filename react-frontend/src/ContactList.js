@@ -9,20 +9,85 @@ import Navbar from "react-bootstrap/Navbar";
 import Form from "react-bootstrap/Form";
 import Nav from "react-bootstrap/Nav";
 
+const ContactViewModal = withRouter((props) => {
+  const { contact, closeContactView, deleteContact, history } = props;
+  return (
+    <Modal show={true} onHide={closeContactView} centered="true">
+      <Modal.Header closeButton>
+        <Modal.Title>{contact.name}</Modal.Title>
+      </Modal.Header>
+      <Modal.Body>
+        <strong>Email Address:</strong> {contact.email}
+        <hr />
+        <strong>Phone Number:</strong> {contact.phone}
+      </Modal.Body>
+      <Modal.Footer>
+        <Button
+          variant="secondary"
+          onClick={() => history.push("/edit/" + contact._id)}
+        >
+          Edit
+        </Button>
+        <Button
+          variant="danger"
+          onClick={() => {
+            deleteContact(contact._id, closeContactView);
+          }}
+        >
+          Delete
+        </Button>
+      </Modal.Footer>
+    </Modal>
+  );
+});
+
+class ImportModal extends React.Component {
+  render() {
+    const { closeImport } = this.props;
+
+    return (
+      <Modal show={true} onHide={closeImport} centered="true">
+        <Modal.Header closeButton>
+          <Modal.Title>Import Contacts CSV</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <strong>Email Address:</strong>
+          <hr />
+          <strong>Phone Number:</strong>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="outline-secondary" onClick={closeImport}>
+            Cancel
+          </Button>
+          <Button variant="primary" onClick={closeImport}>
+            Import
+          </Button>
+        </Modal.Footer>
+      </Modal>
+    );
+  }
+}
+
 class ContactList extends React.Component {
   state = {
     contact: false,
+    importCsv: false,
     contactSearch: "",
   };
 
   constructor(props) {
     super(props);
 
-    this.handleClose = this.handleClose.bind(this);
+    this.closeContactView = this.closeContactView.bind(this);
+    this.closeImport = this.closeImport.bind(this);
   }
 
-  handleClose() {
+  closeContactView() {
     this.setState({ contact: false });
+  }
+
+  closeImport() {
+    this.setState({ importCsv: false });
   }
 
   handleSearch = (event) => {
@@ -43,8 +108,8 @@ class ContactList extends React.Component {
   }
 
   render() {
-    const { logout, history, deleteContact } = this.props;
-    const { contact, contactSearch } = this.state;
+    const { logout, deleteContact } = this.props;
+    const { contact, contactSearch, importCsv } = this.state;
 
     const rows = this.getDisplayContacts(contactSearch).map((row, index) => {
       return (
@@ -104,6 +169,15 @@ class ContactList extends React.Component {
                       </Button>
                     </Link>
                   </Nav.Item>
+                  <Nav.Item>
+                    <Nav.Link
+                      onClick={() => {
+                        this.setState({ importCsv: true });
+                      }}
+                    >
+                      Upload Contacts CSV
+                    </Nav.Link>
+                  </Nav.Item>
                 </Nav>
                 <footer className="footer mb-3 mx-2">
                   <Nav className="flex-column">
@@ -141,33 +215,14 @@ class ContactList extends React.Component {
         </Container>
 
         {contact !== false && (
-          <Modal show={true} onHide={this.handleClose} centered="true">
-            <Modal.Header closeButton>
-              <Modal.Title>{contact.name}</Modal.Title>
-            </Modal.Header>
-            <Modal.Body>
-              <strong>Email Address:</strong> {contact.email}
-              <hr />
-              <strong>Phone Number:</strong> {contact.phone}
-            </Modal.Body>
-            <Modal.Footer>
-              <Button
-                variant="secondary"
-                onClick={() => history.push("/edit/" + contact._id)}
-              >
-                Edit
-              </Button>
-              <Button
-                variant="danger"
-                onClick={() => {
-                  deleteContact(contact._id, this.handleClose);
-                }}
-              >
-                Delete
-              </Button>
-            </Modal.Footer>
-          </Modal>
+          <ContactViewModal
+            contact={contact}
+            closeContactView={this.closeContactView}
+            deleteContact={deleteContact}
+          />
         )}
+
+        {importCsv && <ImportModal closeImport={this.closeImport} />}
       </>
     );
   }
