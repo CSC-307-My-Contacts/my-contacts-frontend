@@ -79,3 +79,8 @@ body {
   width: 72px;
   height: 72px;
 }
+
+.sidebar .nav-link {
+  font-weight: 500;
+  color: #333;
+}

@@ -9,20 +9,111 @@ import Navbar from "react-bootstrap/Navbar";
 import Form from "react-bootstrap/Form";
 import Nav from "react-bootstrap/Nav";
 
+const ContactViewModal = withRouter((props) => {
+  const { contact, closeContactView, deleteContact, history } = props;
+  return (
+    <Modal show={true} onHide={closeContactView} centered="true">
+      <Modal.Header closeButton>
+        <Modal.Title>{contact.name}</Modal.Title>
+      </Modal.Header>
+      <Modal.Body>
+        <strong>Email Address:</strong> {contact.email}
+        <hr />
+        <strong>Phone Number:</strong> {contact.phone}
+      </Modal.Body>
+      <Modal.Footer>
+        <Button
+          variant="secondary"
+          onClick={() => history.push("/edit/" + contact._id)}
+        >
+          Edit
+        </Button>
+        <Button
+          variant="danger"
+          onClick={() => {
+            deleteContact(contact._id, closeContactView);
+          }}
+        >
+          Delete
+        </Button>
+      </Modal.Footer>
+    </Modal>
+  );
+});
+
+class ImportModal extends React.Component {
+  state = {
+    selectedFile: null,
+  };
+
+  onChangeHandler = (event) => {
+    console.log(event.target.files[0]);
+    this.setState({
+      selectedFile: event.target.files[0],
+      loaded: 0,
+    });
+  };
+
+  onClickHandler = () => {
+    const data = new FormData();
+    data.append("file", this.state.selectedFile, this.state.selectedFile.name);
+    this.props.importCsv(data);
+  };
+
+  render() {
+    const { closeImport } = this.props;
+
+    return (
+      <Modal show={true} onHide={closeImport} centered="true">
+        <Modal.Header closeButton>
+          <Modal.Title>Import Contacts CSV</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Form>
+            <p className="text-muted">
+              To import contacts from an exterior contact service select a .csv
+              file containing the desired contacts.
+            </p>
+            <Form.Control
+              type="file"
+              name="file"
+              onChange={this.onChangeHandler}
+            />
+          </Form>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="outline-secondary" onClick={closeImport}>
+            Cancel
+          </Button>
+          <Button variant="primary" onClick={this.onClickHandler}>
+            Import
+          </Button>
+        </Modal.Footer>
+      </Modal>
+    );
+  }
+}
+
 class ContactList extends React.Component {
   state = {
     contact: false,
+    showImportModal: false,
     contactSearch: "",
   };
 
   constructor(props) {
     super(props);
 
-    this.handleClose = this.handleClose.bind(this);
+    this.closeContactView = this.closeContactView.bind(this);
+    this.closeImport = this.closeImport.bind(this);
   }
 
-  handleClose() {
+  closeContactView() {
     this.setState({ contact: false });
+  }
+
+  closeImport() {
+    this.setState({ showImportModal: false });
   }
 
   handleSearch = (event) => {
@@ -43,8 +134,8 @@ class ContactList extends React.Component {
   }
 
   render() {
-    const { logout, history, deleteContact } = this.props;
-    const { contact, contactSearch } = this.state;
+    const { logout, deleteContact, importCsv } = this.props;
+    const { contact, contactSearch, showImportModal } = this.state;
 
     const rows = this.getDisplayContacts(contactSearch).map((row, index) => {
       return (
@@ -104,6 +195,15 @@ class ContactList extends React.Component {
                       </Button>
                     </Link>
                   </Nav.Item>
+                  <Nav.Item>
+                    <Nav.Link
+                      onClick={() => {
+                        this.setState({ showImportModal: true });
+                      }}
+                    >
+                      Upload Contacts CSV
+                    </Nav.Link>
+                  </Nav.Item>
                 </Nav>
                 <footer className="footer mb-3 mx-2">
                   <Nav className="flex-column">
@@ -141,32 +241,15 @@ class ContactList extends React.Component {
         </Container>
 
         {contact !== false && (
-          <Modal show={true} onHide={this.handleClose} centered="true">
-            <Modal.Header closeButton>
-              <Modal.Title>{contact.name}</Modal.Title>
-            </Modal.Header>
-            <Modal.Body>
-              <strong>Email Address:</strong> {contact.email}
-              <hr />
-              <strong>Phone Number:</strong> {contact.phone}
-            </Modal.Body>
-            <Modal.Footer>
-              <Button
-                variant="secondary"
-                onClick={() => history.push("/edit/" + contact._id)}
-              >
-                Edit
-              </Button>
-              <Button
-                variant="danger"
-                onClick={() => {
-                  deleteContact(contact._id, this.handleClose);
-                }}
-              >
-                Delete
-              </Button>
-            </Modal.Footer>
-          </Modal>
+          <ContactViewModal
+            contact={contact}
+            closeContactView={this.closeContactView}
+            deleteContact={deleteContact}
+          />
+        )}
+
+        {showImportModal && (
+          <ImportModal closeImport={this.closeImport} importCsv={importCsv} />
         )}
       </>
     );

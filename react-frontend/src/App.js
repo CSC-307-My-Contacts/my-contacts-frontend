@@ -34,6 +34,7 @@ class App extends Component {
     this.registerUser = this.registerUser.bind(this);
     this.saveContact = this.saveContact.bind(this);
     this.deleteContact = this.deleteContact.bind(this);
+    this.importCsv = this.importCsvRequest.bind(this);
   }
 
   tokenRequest(type, username, password, callback) {
@@ -109,6 +110,24 @@ class App extends Component {
         //Not handling the error. Just logging into the console.
         console.log(error);
       });
+  }
+
+  importCsvRequest(data, callback) {
+    axios
+      .post(this.API_ROOT + "csv", data)
+      .then((res) => {
+        if (res.status === 200) {
+          callback();
+        }
+      })
+      .catch(function (error) {
+        //Not handling the error. Just logging into the console.
+        console.log(error);
+      });
+  }
+
+  importCsv(data) {
+    this.importCsvRequest(data, () => {});
   }
 
   deleteContact(id, callback) {
@@ -214,6 +233,7 @@ class App extends Component {
             contacts={this.state.contacts}
             logout={this.logout}
             deleteContact={this.deleteContact}
+            importCsv={this.importCsv}
           />
         </Switch>
       </Router>
