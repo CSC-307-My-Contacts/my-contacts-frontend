@@ -42,6 +42,24 @@ const ContactViewModal = withRouter((props) => {
 });
 
 class ImportModal extends React.Component {
+  state = {
+    selectedFile: null,
+  };
+
+  onChangeHandler = (event) => {
+    console.log(event.target.files[0]);
+    this.setState({
+      selectedFile: event.target.files[0],
+      loaded: 0,
+    });
+  };
+
+  onClickHandler = () => {
+    const data = new FormData();
+    data.append("file", this.state.selectedFile, this.state.selectedFile.name);
+    this.props.importCsv(data);
+  };
+
   render() {
     const { closeImport } = this.props;
 
@@ -51,15 +69,23 @@ class ImportModal extends React.Component {
           <Modal.Title>Import Contacts CSV</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <strong>Email Address:</strong>
-          <hr />
-          <strong>Phone Number:</strong>
+          <Form>
+            <p className="text-muted">
+              To import contacts from an exterior contact service select a .csv
+              file containing the desired contacts.
+            </p>
+            <Form.Control
+              type="file"
+              name="file"
+              onChange={this.onChangeHandler}
+            />
+          </Form>
         </Modal.Body>
         <Modal.Footer>
           <Button variant="outline-secondary" onClick={closeImport}>
             Cancel
           </Button>
-          <Button variant="primary" onClick={closeImport}>
+          <Button variant="primary" onClick={this.onClickHandler}>
             Import
           </Button>
         </Modal.Footer>
@@ -71,7 +97,7 @@ class ImportModal extends React.Component {
 class ContactList extends React.Component {
   state = {
     contact: false,
-    importCsv: false,
+    showImportModal: false,
     contactSearch: "",
   };
 
@@ -87,7 +113,7 @@ class ContactList extends React.Component {
   }
 
   closeImport() {
-    this.setState({ importCsv: false });
+    this.setState({ showImportModal: false });
   }
 
   handleSearch = (event) => {
@@ -108,8 +134,8 @@ class ContactList extends React.Component {
   }
 
   render() {
-    const { logout, deleteContact } = this.props;
-    const { contact, contactSearch, importCsv } = this.state;
+    const { logout, deleteContact, importCsv } = this.props;
+    const { contact, contactSearch, showImportModal } = this.state;
 
     const rows = this.getDisplayContacts(contactSearch).map((row, index) => {
       return (
@@ -172,7 +198,7 @@ class ContactList extends React.Component {
                   <Nav.Item>
                     <Nav.Link
                       onClick={() => {
-                        this.setState({ importCsv: true });
+                        this.setState({ showImportModal: true });
                       }}
                     >
                       Upload Contacts CSV
@@ -222,7 +248,9 @@ class ContactList extends React.Component {
           />
         )}
 
-        {importCsv && <ImportModal closeImport={this.closeImport} />}
+        {showImportModal && (
+          <ImportModal closeImport={this.closeImport} importCsv={importCsv} />
+        )}
       </>
     );
   }
