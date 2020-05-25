@@ -61,17 +61,19 @@ body: {
 ```
 
 On success:
+
 ```JavaScript
 Status-Code: 200
 {
     token: "user-token"
 }
 ```
+
 On failure:
+
 ```JavaScript
 Status-Code: 403
 ```
-
 
 ### `DELETE` http://{APIROOT}/
 
@@ -86,4 +88,22 @@ body: {
 
 ```JavaScript
 Status-Code: 204
+```
+
+### `POST` http://{APIROOT}/csv
+
+```JavaScript
+header: {
+    token: "user-token"
+},
+files: {
+    file: CSV-File
+}
+```
+
+```JavaScript
+Status-Code: 200
+{
+    contacts: [ /* SEE GET */ ]
+}
 ```
