@@ -114,3 +114,7 @@ Status-Code: 200
     contacts: [ /* SEE CONTACT */ ]
 }
 ```
+
+### `GET` http://{APIROOT}/img/<filename>
+- No headers or body needed
+- If the file system contains the image, serve it
