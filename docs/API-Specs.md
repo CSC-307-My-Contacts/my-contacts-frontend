@@ -6,7 +6,6 @@
 
 ```JavaScript
 {
-
     _id: "contact ID",
     name: "name",
     emails: [
@@ -17,7 +16,11 @@
         {number: "#######", type: "work" },
         ...
     ],
-    labels: ["Friends", "Family", ...]
+    labels: ["Friends", "Family", ...],
+    image: {
+        type: "none" | "external" | "hosted",
+        url: "www"
+    }
 }
 ```
 
