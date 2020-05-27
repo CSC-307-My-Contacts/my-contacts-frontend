@@ -11,7 +11,9 @@ class ContactForm extends Component {
       name: "",
       email: "",
       phone: "",
+      labels: [],
     },
+    label_edit: "",
   };
 
   handleChange = (event) => {
@@ -21,6 +23,29 @@ class ContactForm extends Component {
     this.setState({
       contact: contact,
     });
+  };
+
+  handleLabelChange = (event) => {
+    const text = event.target.value;
+    if (/\s/g.test(text)) {
+      let contact = this.state.contact;
+      contact.labels = [
+        ...contact.labels,
+        ...text
+          .trim()
+          .split(" ")
+          .filter((s) => s !== ""),
+      ];
+      this.setState({ contact: contact, label_edit: "" });
+    } else {
+      this.setState({ label_edit: text });
+    }
+  };
+
+  removeLabel = (text) => {
+    let contact = this.state.contact;
+    contact.labels = contact.labels.filter((l) => l !== text);
+    this.setState({ contact: contact });
   };
 
   componentDidMount() {
@@ -35,7 +60,20 @@ class ContactForm extends Component {
   }
 
   render() {
-    const { name, email, phone } = this.state.contact;
+    const { name, email, phone, labels } = this.state.contact;
+
+    const label_buttons = labels.map((label_text, index) => {
+      return (
+        <Button
+          key={index}
+          variant="dark"
+          className="mr-2 mb-2"
+          onClick={() => this.removeLabel(label_text)}
+        >
+          {label_text} <span aria-hidden="true">&times;</span>
+        </Button>
+      );
+    });
 
     return (
       <Container className="contact-form">
@@ -74,6 +112,23 @@ class ContactForm extends Component {
               value={phone}
               onChange={this.handleChange}
             />
+          </Form.Group>
+          <hr />
+          <Form.Group>
+            <Form.Label>Labels</Form.Label>
+            <div className="d-flex flex-row">
+              <div className="mw-50">{label_buttons}</div>
+              <div className="col p-0">
+                <Form.Control
+                  type="text"
+                  value={this.state.label_edit}
+                  onChange={this.handleLabelChange}
+                />
+              </div>
+            </div>
+            <small className="form-text text-muted">
+              Enter in labels separated by whitespace.
+            </small>
           </Form.Group>
           <hr />
           <Button
