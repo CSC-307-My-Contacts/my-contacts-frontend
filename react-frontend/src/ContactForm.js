@@ -11,7 +11,7 @@ class ContactForm extends Component {
     contact: {
       name: "",
       emails: [{ address: "", type: "none" }],
-      phone: "",
+      phones: [{ number: "", type: "none" }],
       labels: [],
     },
     label_edit: "",
@@ -80,7 +80,7 @@ class ContactForm extends Component {
   }
 
   render() {
-    const { name, emails, phone, labels } = this.state.contact;
+    const { name, emails, phones, labels } = this.state.contact;
 
     const emailFields = emails.map((email, index) => {
       return (
@@ -111,6 +111,42 @@ class ContactForm extends Component {
             className="close"
             onClick={(event) => {
               this.handleListRemove(event, "emails", index);
+            }}
+          >
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+      );
+    });
+
+    const phoneFields = phones.map((phone, index) => {
+      return (
+        <div className="d-flex flex-md-nowrap mb-1" key={index}>
+          <Form.Control
+            type="tel"
+            name="phone"
+            value={phone.number}
+            onChange={(event) =>
+              this.handleListChange(event, "phones", index, "number")
+            }
+          />
+          <select
+            className="col-3 form-control mx-2"
+            value={phone.type}
+            onChange={(event) =>
+              this.handleListChange(event, "phones", index, "type")
+            }
+          >
+            <option value="none">Type...</option>
+            <option value="home">Home</option>
+            <option value="work">Work</option>
+            <option value="other">Other</option>
+          </select>
+          <button
+            aria-label="Close"
+            className="close"
+            onClick={(event) => {
+              this.handleListRemove(event, "phones", index);
             }}
           >
             <span aria-hidden="true">&times;</span>
@@ -172,14 +208,23 @@ class ContactForm extends Component {
           </Form.Group>
 
           <Form.Group className="mb-3">
-            <Form.Label htmlFor="phone">Phone Number</Form.Label>
-            <Form.Control
-              type="tel"
-              id="phone"
-              name="phone"
-              value={phone}
-              onChange={this.handleChange}
-            />
+            <h5>
+              Phone Number{" "}
+              <Button
+                size="sm"
+                variant="outline-secondary"
+                onClick={(event) => {
+                  this.handelListAdd(event, "phones", {
+                    number: "",
+                    type: "none",
+                  });
+                }}
+              >
+                {" "}
+                Add Phone
+              </Button>
+            </h5>
+            {phoneFields}
           </Form.Group>
           <hr />
           <Form.Group>
