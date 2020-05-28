@@ -8,6 +8,7 @@ import Row from "react-bootstrap/Row";
 import Navbar from "react-bootstrap/Navbar";
 import Form from "react-bootstrap/Form";
 import Nav from "react-bootstrap/Nav";
+import Badge from "react-bootstrap/Badge";
 
 const ContactViewModal = withRouter((props) => {
   const { contact, closeContactView, deleteContact, history } = props;
@@ -94,6 +95,17 @@ class ImportModal extends React.Component {
   }
 }
 
+const LabelList = (props) => {
+  const labels = props.labels.map((label, index) => {
+    return (
+      <Badge key={index} variant="dark" className="mr-2">
+        {label}
+      </Badge>
+    );
+  });
+  return <>{labels}</>;
+};
+
 class ContactList extends React.Component {
   state = {
     contact: false,
@@ -149,6 +161,9 @@ class ContactList extends React.Component {
           <td>{row.name}</td>
           <td>{row.phone}</td>
           <td>{row.email}</td>
+          <td>
+            <LabelList labels={row.labels} />
+          </td>
         </tr>
       );
     });
@@ -231,6 +246,7 @@ class ContactList extends React.Component {
                       <th>Full Name</th>
                       <th>Phone #</th>
                       <th>Email Address</th>
+                      <th>Labels</th>
                     </tr>
                   </thead>
                   <tbody>{rows}</tbody>
