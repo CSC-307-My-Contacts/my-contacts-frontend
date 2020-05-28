@@ -3,13 +3,14 @@ import { withRouter } from "react-router-dom";
 import Container from "react-bootstrap/Container";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
+import Row from "react-bootstrap/Row";
 
 class ContactForm extends Component {
   state = {
     type: "Create",
     contact: {
       name: "",
-      email: "",
+      emails: [{ address: "", type: "none" }],
       phone: "",
       labels: [],
     },
@@ -23,6 +24,12 @@ class ContactForm extends Component {
     this.setState({
       contact: contact,
     });
+  };
+
+  handleListChange = (event, list, index, field) => {
+    let contact = this.state.contact;
+    contact[list][index][field] = event.target.value;
+    this.setState({ contact: contact });
   };
 
   handleLabelChange = (event) => {
@@ -60,9 +67,40 @@ class ContactForm extends Component {
   }
 
   render() {
-    const { name, email, phone, labels } = this.state.contact;
+    const { name, emails, phone, labels } = this.state.contact;
 
-    const label_buttons = labels.map((label_text, index) => {
+    const emailFields = emails.map((email, index) => {
+      return (
+        <div className="d-flex flex-md-nowrap" key={index}>
+          <Form.Control
+            type="email"
+            id="email"
+            name="email"
+            value={email.address}
+            onChange={(event) =>
+              this.handleListChange(event, "emails", index, "address")
+            }
+          />
+          <select
+            className="col-3 form-control mx-2"
+            value={email.type}
+            onChange={(event) =>
+              this.handleListChange(event, "emails", index, "type")
+            }
+          >
+            <option value="none">Type...</option>
+            <option value="home">Home</option>
+            <option value="work">Work</option>
+            <option value="other">Other</option>
+          </select>
+          <Button aria-label="Close" className="close">
+            <span aria-hidden="true">&times;</span>
+          </Button>
+        </div>
+      );
+    });
+
+    const labelButtons = labels.map((label_text, index) => {
       return (
         <Button
           key={index}
@@ -93,14 +131,16 @@ class ContactForm extends Component {
           </Form.Group>
           <hr />
           <Form.Group className="mb-3">
-            <Form.Label htmlFor="email">Email Address</Form.Label>
-            <Form.Control
-              type="email"
-              id="email"
-              name="email"
-              value={email}
-              onChange={this.handleChange}
-            />
+            <div>
+              <h5>
+                Email Addresses{" "}
+                <Button size="sm" variant="outline-secondary">
+                  {" "}
+                  Add Email
+                </Button>
+              </h5>
+            </div>
+            {emailFields}
           </Form.Group>
 
           <Form.Group className="mb-3">
@@ -117,7 +157,7 @@ class ContactForm extends Component {
           <Form.Group>
             <Form.Label>Labels</Form.Label>
             <div className="d-flex flex-row">
-              <div className="mw-50">{label_buttons}</div>
+              <div className="mw-50">{labelButtons}</div>
               <div className="col p-0">
                 <Form.Control
                   type="text"
@@ -131,19 +171,30 @@ class ContactForm extends Component {
             </small>
           </Form.Group>
           <hr />
-          <Button
-            variant="primary"
-            size="lg"
-            block
-            onClick={() => {
-              this.props.saveContact(this.state.contact, () =>
-                this.props.history.push("/")
-              );
-            }}
-          >
-            {" "}
-            Save Contact{" "}
-          </Button>
+          <Row>
+            <Button
+              className="col mr-3"
+              size="lg"
+              variant="secondary"
+              onClick={() => this.props.history.push("/")}
+            >
+              Cancel
+            </Button>
+            <Button
+              className="col"
+              variant="primary"
+              size="lg"
+              block
+              onClick={() => {
+                this.props.saveContact(this.state.contact, () =>
+                  this.props.history.push("/")
+                );
+              }}
+            >
+              {" "}
+              Save Contact{" "}
+            </Button>
+          </Row>
         </Form>
       </Container>
     );
