@@ -32,6 +32,19 @@ class ContactForm extends Component {
     this.setState({ contact: contact });
   };
 
+  handleListRemove = (event, list, index) => {
+    let contact = this.state.contact;
+    contact[list].splice(index, 1);
+    this.setState({ contact: contact });
+    event.preventDefault();
+  };
+
+  handelListAdd = (event, list, add) => {
+    let contact = this.state.contact;
+    contact[list] = [...contact[list], add];
+    this.setState({ contact: contact });
+  };
+
   handleLabelChange = (event) => {
     const text = event.target.value;
     if (/\s/g.test(text)) {
@@ -71,7 +84,7 @@ class ContactForm extends Component {
 
     const emailFields = emails.map((email, index) => {
       return (
-        <div className="d-flex flex-md-nowrap" key={index}>
+        <div className="d-flex flex-md-nowrap mb-1" key={index}>
           <Form.Control
             type="email"
             id="email"
@@ -93,9 +106,15 @@ class ContactForm extends Component {
             <option value="work">Work</option>
             <option value="other">Other</option>
           </select>
-          <Button aria-label="Close" className="close">
+          <button
+            aria-label="Close"
+            className="close"
+            onClick={(event) => {
+              this.handleListRemove(event, "emails", index);
+            }}
+          >
             <span aria-hidden="true">&times;</span>
-          </Button>
+          </button>
         </div>
       );
     });
@@ -134,7 +153,16 @@ class ContactForm extends Component {
             <div>
               <h5>
                 Email Addresses{" "}
-                <Button size="sm" variant="outline-secondary">
+                <Button
+                  size="sm"
+                  variant="outline-secondary"
+                  onClick={(event) => {
+                    this.handelListAdd(event, "emails", {
+                      address: "",
+                      type: "none",
+                    });
+                  }}
+                >
                   {" "}
                   Add Email
                 </Button>
