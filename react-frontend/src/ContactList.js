@@ -12,6 +12,23 @@ import Badge from "react-bootstrap/Badge";
 
 const ContactViewModal = withRouter((props) => {
   const { contact, closeContactView, deleteContact, history } = props;
+
+  const emails = contact.emails.map((row, index) => {
+    return (
+      <div className="mb-1">
+        {row.address} <span className="text-muted">({row.type})</span>
+      </div>
+    );
+  });
+
+  const phones = contact.phones.map((row, index) => {
+    return (
+      <div className="mb-1">
+        {row.number} <span className="text-muted">({row.type})</span>
+      </div>
+    );
+  });
+
   return (
     <Modal show={true} onHide={closeContactView} centered="true">
       <Modal.Header closeButton>
@@ -22,9 +39,9 @@ const ContactViewModal = withRouter((props) => {
         </Modal.Title>
       </Modal.Header>
       <Modal.Body>
-        <strong>Email Address:</strong> {contact.email}
+        <strong>Email Address:</strong> {emails}
         <hr />
-        <strong>Phone Number:</strong> {contact.phone}
+        <strong>Phone Number:</strong> {phones}
       </Modal.Body>
       <Modal.Footer>
         <Button
@@ -163,8 +180,8 @@ class ContactList extends React.Component {
           className="pointer"
         >
           <td>{row.name}</td>
-          <td>{row.phone}</td>
-          <td>{row.email}</td>
+          <td>{row.phones[0].number || ""}</td>
+          <td>{row.emails[0].address || ""}</td>
           <td>
             <LabelList labels={row.labels} />
           </td>
