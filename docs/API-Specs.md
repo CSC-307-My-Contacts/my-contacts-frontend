@@ -1,5 +1,31 @@
 # Backend API Specs
 
+## Objects
+
+### Contact
+
+```JavaScript
+{
+    _id: "contact ID",
+    name: "name",
+    emails: [
+        {address: "address", type: "home" },
+        ...
+    ],
+    phones: [
+        {number: "#######", type: "work" },
+        ...
+    ],
+    labels: ["Friends", "Family", ...],
+    image: {
+        type: "none" | "external" | "hosted",
+        url: "www"
+    }
+}
+```
+
+## API ROUTES
+
 ### `GET` http://{APIROOT}/
 
 ```JavaScript
@@ -11,15 +37,7 @@ header: {
 ```JavaScript
 Status-Code: 200
 {
-    contacts: [
-        {
-            _id: "contact ID",
-            name: "name",
-            email: "email",
-            phone: "#####",
-        },
-        ...
-    ]
+    contacts: [ /* SEE CONTACT */ ]
 }
 ```
 
@@ -30,25 +48,14 @@ header: {
     token: "user-token"
 },
 body: {
-    contact: {
-        _id: "contact ID", // Optional
-        name: "name",
-        email: "email",
-        phone: "#####",
-    }
+    contact: /* SEE CONTACT (maybe no _id) */
 }
 ```
 
 ```JavaScript
 Status-Code: 200
 {
-    contact: {
-        _id: "contact ID",
-        name: "name",
-        email: "email",
-        phone: "#####",
-    }
-
+    contact: /* SEE CONTACT */
 }
 ```
 ### `POST` http://{APIROOT}/{login|create}
@@ -104,6 +111,10 @@ files: {
 ```JavaScript
 Status-Code: 200
 {
-    contacts: [ /* SEE GET */ ]
+    contacts: [ /* SEE CONTACT */ ]
 }
 ```
+
+### `GET` http://{APIROOT}/img/<filename>
+- No headers or body needed
+- If the file system contains the image, serve it
