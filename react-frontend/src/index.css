@@ -80,6 +80,10 @@ body {
   height: 72px;
 }
 
+.mw-50 {
+  max-width: 50%;
+}
+
 .sidebar .nav-link {
   font-weight: 500;
   color: #333;

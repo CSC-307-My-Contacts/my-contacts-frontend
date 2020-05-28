@@ -3,6 +3,7 @@ import { Link, withRouter } from "react-router-dom";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 import Image from "react-bootstrap/Image";
+import Spinner from "react-bootstrap/Spinner";
 
 class Register extends Component {
   state = {
@@ -11,6 +12,7 @@ class Register extends Component {
     password2: "",
     match: true,
     usernameOk: true,
+    waiting: false,
   };
 
   handleChange = (event) => {
@@ -21,7 +23,44 @@ class Register extends Component {
     });
   };
 
+  register = () => {
+    if (this.state.password1 === this.state.password2) {
+      this.setState({ match: true, waiting: true });
+      this.props.registerUser(this.state.username, this.state.password1, () => {
+        this.setState({ usernameOk: false, waiting: false });
+      });
+    } else {
+      this.setState({ match: false, usernameOk: true });
+    }
+  };
+
   render() {
+    const RegisterButton = () => (
+      <Button
+        disabled={this.state.waiting}
+        variant="primary"
+        size="lg"
+        block
+        onClick={this.register}
+      >
+        {this.state.waiting ? (
+          <>
+            <Spinner
+              as="span"
+              animation="border"
+              size="sm"
+              role="status"
+              aria-hidden="true"
+              className="m-1"
+            />{" "}
+            Registering&hellip;
+          </>
+        ) : (
+          <>Register</>
+        )}
+      </Button>
+    );
+
     return (
       <div className="center-contents h-100">
         <div className="form-signin text-center">
@@ -67,28 +106,7 @@ class Register extends Component {
               Passwords must match
             </Form.Control.Feedback>
           </Form.Group>
-          <Button
-            variant="primary"
-            size="lg"
-            block
-            onClick={() => {
-              if (this.state.password1 === this.state.password2) {
-                this.setState({ match: true });
-                this.props.registerUser(
-                  this.state.username,
-                  this.state.password1,
-                  (success) => {
-                    if (success) this.props.history.push("/");
-                    else this.setState({ usernameOk: false });
-                  }
-                );
-              } else {
-                this.setState({ match: false, usernameOk: true });
-              }
-            }}
-          >
-            Register
-          </Button>
+          <RegisterButton />
           <p className="text-muted mt-3">
             Already have an account? <Link to="/login">Login</Link>
           </p>
