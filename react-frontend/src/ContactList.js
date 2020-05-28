@@ -15,7 +15,11 @@ const ContactViewModal = withRouter((props) => {
   return (
     <Modal show={true} onHide={closeContactView} centered="true">
       <Modal.Header closeButton>
-        <Modal.Title>{contact.name}</Modal.Title>
+        <Modal.Title>
+          {contact.name}
+          <span className="mx-2" />
+          <LabelList labels={contact.labels} />
+        </Modal.Title>
       </Modal.Header>
       <Modal.Body>
         <strong>Email Address:</strong> {contact.email}
