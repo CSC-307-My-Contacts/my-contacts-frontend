@@ -15,7 +15,7 @@ const ContactViewModal = withRouter((props) => {
 
   const emails = contact.emails.map((row, index) => {
     return (
-      <div className="mb-1">
+      <div className="mb-1" key={index}>
         {row.address} <span className="text-muted">({row.type})</span>
       </div>
     );
@@ -23,7 +23,7 @@ const ContactViewModal = withRouter((props) => {
 
   const phones = contact.phones.map((row, index) => {
     return (
-      <div className="mb-1">
+      <div className="mb-1" key={index}>
         {row.number} <span className="text-muted">({row.type})</span>
       </div>
     );
@@ -157,11 +157,7 @@ class ContactList extends React.Component {
   getDisplayContacts(value) {
     return this.state.contactSearch
       ? this.props.contacts.filter((c) => {
-          return (
-            c.name.toUpperCase().includes(value.toUpperCase()) ||
-            c.email.toUpperCase().includes(value.toUpperCase()) ||
-            c.phone.toUpperCase().includes(value.toUpperCase())
-          );
+          return c.name.toUpperCase().includes(value.toUpperCase());
         })
       : this.props.contacts;
   }
