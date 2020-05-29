@@ -117,7 +117,7 @@ class ImportModal extends React.Component {
 }
 
 const LabelList = (props) => {
-  const labels = props.labels.map((label, index) => {
+  const labels = (props.labels || []).map((label, index) => {
     return (
       <Badge key={index} variant="dark" className="mr-2">
         {label}
@@ -180,8 +180,8 @@ class ContactList extends React.Component {
           className="pointer"
         >
           <td>{row.name}</td>
-          <td>{row.phones[0].number || ""}</td>
-          <td>{row.emails[0].address || ""}</td>
+          <td>{row.phones ? row.phones[0].number : ""}</td>
+          <td>{row.emails ? row.emails[0].address : ""}</td>
           <td>
             <LabelList labels={row.labels} />
           </td>
