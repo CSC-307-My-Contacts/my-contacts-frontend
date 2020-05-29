@@ -114,7 +114,9 @@ class App extends Component {
 
   importCsvRequest(data, callback) {
     axios
-      .post(this.API_ROOT + "csv", data)
+      .post(this.API_ROOT + "csv", data, {
+        headers: { token: this.state.token },
+      })
       .then((res) => {
         if (res.status === 200) {
           callback();
