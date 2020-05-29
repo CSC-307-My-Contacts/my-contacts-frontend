@@ -185,6 +185,12 @@ class ContactList extends React.Component {
       : this.props.contacts;
   }
 
+  getLabelList(contacts) {
+    return contacts
+      .reduce((list, contact) => list.concat(contact.labels), [])
+      .filter((v, i, a) => a.indexOf(v) === i);
+  }
+
   render() {
     const { logout, deleteContact, importCsv } = this.props;
     const { contact, contactSearch, showImportModal } = this.state;
@@ -207,6 +213,20 @@ class ContactList extends React.Component {
         </tr>
       );
     });
+
+    const labels = this.getLabelList(this.props.contacts).map(
+      (label, index) => {
+        return (
+          <Nav.Item key={index}>
+            <Nav.Link>
+              <Button variant="outline-dark" size="sm">
+                {label}
+              </Button>
+            </Nav.Link>
+          </Nav.Item>
+        );
+      }
+    );
 
     return (
       <>
@@ -243,13 +263,13 @@ class ContactList extends React.Component {
                 </div>
                 <hr />
                 <Nav className="flex-column">
-                  <Nav.Item className="px-3">
+                  <span className="nav-link">
                     <Link to={"/create"} style={{ textDecoration: "none" }}>
                       <Button block variant="primary">
                         New Contact
                       </Button>
                     </Link>
-                  </Nav.Item>
+                  </span>
                   <Nav.Item>
                     <Nav.Link
                       onClick={() => {
@@ -260,6 +280,11 @@ class ContactList extends React.Component {
                     </Nav.Link>
                   </Nav.Item>
                 </Nav>
+                <hr />
+                <h6 className="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
+                  Labels
+                </h6>
+                <Nav className="flex-column">{labels}</Nav>
                 <footer className="footer mb-3 mx-2">
                   <Nav className="flex-column">
                     <Nav.Item>
