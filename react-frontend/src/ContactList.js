@@ -220,7 +220,7 @@ class ContactList extends React.Component {
       (label, index) => {
         return (
           <Nav.Item key={index}>
-            <Nav.Link>
+            <Nav.Link className="py-1">
               <Button variant="outline-dark" size="sm">
                 {label}
               </Button>
@@ -235,7 +235,7 @@ class ContactList extends React.Component {
         <Navbar
           variant="dark"
           bg="dark"
-          className="sticky-top flex-md-nowrap p-0"
+          className="fixed-top flex-md-nowrap p-0"
         >
           <Navbar.Brand className="col-sm-3 col-md-2 mr-0">
             <img
@@ -249,7 +249,7 @@ class ContactList extends React.Component {
           </Navbar.Brand>
         </Navbar>
         <Container fluid>
-          <Row>
+          <Row className="mt-5">
             <nav className="col-md-2 d-none d-md-block bg-light sidebar">
               <div className="sidebar-sticky">
                 <div className="flex-md-nowrap px-3">
