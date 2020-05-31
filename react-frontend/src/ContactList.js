@@ -155,6 +155,7 @@ class ContactList extends React.Component {
     contact: false,
     showImportModal: false,
     contactSearch: "",
+    selectedLabel: null,
   };
 
   constructor(props) {
@@ -178,11 +179,19 @@ class ContactList extends React.Component {
   };
 
   getDisplayContacts(value) {
-    return this.state.contactSearch
+    if (!this.state.contactSearch && !this.state.selectedLabel) {
+      return this.props.contacts;
+    }
+    let contacts = this.state.contactSearch
       ? this.props.contacts.filter((c) => {
           return c.name.toUpperCase().includes(value.toUpperCase());
         })
       : this.props.contacts;
+    return this.state.selectedLabel
+      ? contacts.filter((c) => {
+          return (c.labels || []).indexOf(this.state.selectedLabel) !== -1;
+        })
+      : contacts;
   }
 
   getLabelList(contacts) {
@@ -191,9 +200,20 @@ class ContactList extends React.Component {
       .filter((v, i, a) => a.indexOf(v) === i);
   }
 
+  handelLabelClick(label) {
+    this.setState((state) => {
+      return { selectedLabel: state.selectedLabel === label ? null : label };
+    });
+  }
+
   render() {
     const { logout, deleteContact, importCsv } = this.props;
-    const { contact, contactSearch, showImportModal } = this.state;
+    const {
+      contact,
+      contactSearch,
+      showImportModal,
+      selectedLabel,
+    } = this.state;
 
     const rows = this.getDisplayContacts(contactSearch).map((row, index) => {
       return (
@@ -218,15 +238,23 @@ class ContactList extends React.Component {
 
     const labels = this.getLabelList(this.props.contacts).map(
       (label, index) => {
-        return (
-          <Nav.Item key={index}>
-            <Nav.Link className="py-1">
-              <Button variant="outline-dark" size="sm">
-                {label}
-              </Button>
-            </Nav.Link>
-          </Nav.Item>
-        );
+        if (label) {
+          return (
+            <Nav.Item key={index}>
+              <Nav.Link className="py-1">
+                <Button
+                  variant={label === selectedLabel ? "dark" : "outline-dark"}
+                  size="sm"
+                  onClick={() => this.handelLabelClick(label)}
+                >
+                  {label}
+                </Button>
+              </Nav.Link>
+            </Nav.Item>
+          );
+        } else {
+          return null;
+        }
       }
     );
 
