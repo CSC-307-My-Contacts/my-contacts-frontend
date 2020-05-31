@@ -36,7 +36,7 @@ const UploadIcon = () => {
 const ContactViewModal = withRouter((props) => {
   const { contact, closeContactView, deleteContact, history } = props;
 
-  const emails = contact.emails.map((row, index) => {
+  const emails = (contact.emails || []).map((row, index) => {
     return (
       <div className="mb-1" key={index}>
         {row.address} <span className="text-muted">({row.type})</span>
@@ -44,7 +44,7 @@ const ContactViewModal = withRouter((props) => {
     );
   });
 
-  const phones = contact.phones.map((row, index) => {
+  const phones = (contact.phones || []).map((row, index) => {
     return (
       <div className="mb-1" key={index}>
         {row.number} <span className="text-muted">({row.type})</span>
@@ -140,7 +140,7 @@ class ImportModal extends React.Component {
 }
 
 const LabelList = (props) => {
-  const labels = props.labels.map((label, index) => {
+  const labels = (props.labels || []).map((label, index) => {
     return (
       <Badge key={index} variant="dark" className="mr-2">
         {label}
@@ -205,8 +205,10 @@ class ContactList extends React.Component {
           className="pointer"
         >
           <td>{row.name}</td>
-          <td>{row.phones[0].number || ""}</td>
-          <td>{row.emails[0].address || ""}</td>
+          <td>{row.phones && row.phones.length ? row.phones[0].number : ""}</td>
+          <td>
+            {row.emails && row.emails.length ? row.emails[0].address : ""}
+          </td>
           <td>
             <LabelList labels={row.labels} />
           </td>
