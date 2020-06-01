@@ -7,7 +7,6 @@ import Row from "react-bootstrap/Row";
 import Card from "react-bootstrap/Card";
 import Media from "react-bootstrap/Media";
 import ContactImage from "./ContactImage";
-import Figure from "react-bootstrap/Figure";
 
 class ContactForm extends Component {
   state = {

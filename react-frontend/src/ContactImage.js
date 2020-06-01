@@ -9,7 +9,7 @@ const getImageUrl = (image) => {
   return "/contact-no-image.png";
 };
 
-const ContactImage = ({ image: image, className: className, ...rest }) => {
+const ContactImage = ({ image, className, ...rest }) => {
   return (
     <img
       {...rest}
