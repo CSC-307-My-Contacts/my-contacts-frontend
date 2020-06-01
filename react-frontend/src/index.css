@@ -97,3 +97,12 @@ body {
   width: 30px;
   height: 30px;
 }
+
+.modal-image {
+  width: 100px;
+  height: 100px;
+}
+
+.modal-border {
+  border-bottom: 1px solid #dee2e6;
+}

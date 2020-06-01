@@ -9,6 +9,8 @@ import Navbar from "react-bootstrap/Navbar";
 import Form from "react-bootstrap/Form";
 import Nav from "react-bootstrap/Nav";
 import Badge from "react-bootstrap/Badge";
+import Media from "react-bootstrap/Media";
+import MediaBody from "react-bootstrap/Media";
 
 const UploadIcon = () => {
   return (
@@ -55,16 +57,28 @@ const ContactViewModal = withRouter((props) => {
   return (
     <Modal show={true} onHide={closeContactView} centered="true">
       <Modal.Header closeButton>
-        <Modal.Title>
-          {contact.name}
-          <span className="mx-2" />
-          <LabelList labels={contact.labels} />
-        </Modal.Title>
+        <Modal.Title>{contact.name}</Modal.Title>
       </Modal.Header>
+      {contact.labels && contact.labels.length && (
+        <Modal.Body className="modal-border">
+          <LabelList labels={contact.labels} />
+        </Modal.Body>
+      )}
       <Modal.Body>
-        <strong>Email Address:</strong> {emails}
-        <hr />
-        <strong>Phone Number:</strong> {phones}
+        <Media>
+          <img
+            src={getImageUrl(contact.image)}
+            alt=""
+            className="rounded-circle modal-image mr-3"
+          />
+          <MediaBody>
+            <div>
+              <strong>Email Address:</strong> {emails}
+              <hr />
+              <strong>Phone Number:</strong> {phones}
+            </div>
+          </MediaBody>
+        </Media>
       </Modal.Body>
       <Modal.Footer>
         <Button
