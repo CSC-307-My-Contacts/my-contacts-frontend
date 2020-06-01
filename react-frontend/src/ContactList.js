@@ -11,6 +11,7 @@ import Nav from "react-bootstrap/Nav";
 import Badge from "react-bootstrap/Badge";
 import Media from "react-bootstrap/Media";
 import MediaBody from "react-bootstrap/Media";
+import ContactImage from "./ContactImage";
 
 const UploadIcon = () => {
   return (
@@ -66,11 +67,7 @@ const ContactViewModal = withRouter((props) => {
       )}
       <Modal.Body>
         <Media>
-          <img
-            src={getImageUrl(contact.image)}
-            alt=""
-            className="rounded-circle modal-image mr-3"
-          />
+          <ContactImage image={contact.image} className="modal-image mr-3" />
           <MediaBody>
             <div>
               <strong>Email Address:</strong> {emails}
@@ -164,25 +161,6 @@ const LabelList = (props) => {
   return <>{labels}</>;
 };
 
-const getImageUrl = (image) => {
-  if (image && image.type && image.url) {
-    if (image.type === "external") {
-      return image.url;
-    }
-  }
-  return "/contact-no-image.png";
-};
-
-const TableImage = (props) => {
-  return (
-    <img
-      className="rounded-circle table-image mr-2"
-      src={getImageUrl(props.image)}
-      alt=""
-    />
-  );
-};
-
 class ContactList extends React.Component {
   state = {
     contact: false,
@@ -258,7 +236,7 @@ class ContactList extends React.Component {
           className="pointer"
         >
           <td>
-            <TableImage image={row.image} />
+            <ContactImage image={row.image} className="table-image mr-3" />
             {row.name}
           </td>
           <td>{row.phones && row.phones.length ? row.phones[0].number : ""}</td>

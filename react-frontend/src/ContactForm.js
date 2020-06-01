@@ -4,6 +4,10 @@ import Container from "react-bootstrap/Container";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 import Row from "react-bootstrap/Row";
+import Card from "react-bootstrap/Card";
+import Media from "react-bootstrap/Media";
+import ContactImage from "./ContactImage";
+import Figure from "react-bootstrap/Figure";
 
 class ContactForm extends Component {
   state = {
@@ -80,7 +84,7 @@ class ContactForm extends Component {
   }
 
   render() {
-    const { name, emails, phones, labels } = this.state.contact;
+    const { name, emails, phones, labels, image } = this.state.contact;
 
     const emailFields = emails.map((email, index) => {
       return (
@@ -184,6 +188,29 @@ class ContactForm extends Component {
               onChange={this.handleChange}
             />
           </Form.Group>
+
+          <Card bg="light" className="mb-3">
+            <Card.Header>Contact Image</Card.Header>
+            <Card.Body>
+              <Media>
+                <div className="d-table pr-3 border-right">
+                  <ContactImage image={image} className="modal-image d-block" />
+                  <span className="text-muted text-center">current image</span>
+                </div>
+                <div className="px-3">
+                  <Form.Control type="file" name="file" />
+                  <small className="form-text text-muted mb-2">
+                    Select an image for the contact (*.png, *.jpg, *.gif,
+                    *.svg). <br />
+                    Note that the current image will not be updated until the
+                    contact is saved.
+                  </small>
+                  <Button variant="outline-secondary">Upload</Button>
+                </div>
+              </Media>
+            </Card.Body>
+          </Card>
+
           <hr />
           <Form.Group className="mb-3">
             <div>
