@@ -92,3 +92,8 @@ body {
 .sidebar-heading {
   text-transform: uppercase;
 }
+
+.table-image {
+  width: 30px;
+  height: 30px;
+}

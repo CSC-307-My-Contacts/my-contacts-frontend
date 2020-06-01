@@ -150,6 +150,25 @@ const LabelList = (props) => {
   return <>{labels}</>;
 };
 
+const getImageUrl = (image) => {
+  if (image && image.type && image.url) {
+    if (image.type === "external") {
+      return image.url;
+    }
+  }
+  return "/contact-no-image.png";
+};
+
+const TableImage = (props) => {
+  return (
+    <img
+      className="rounded-circle table-image mr-2"
+      src={getImageUrl(props.image)}
+      alt=""
+    />
+  );
+};
+
 class ContactList extends React.Component {
   state = {
     contact: false,
@@ -224,7 +243,10 @@ class ContactList extends React.Component {
           }}
           className="pointer"
         >
-          <td>{row.name}</td>
+          <td>
+            <TableImage image={row.image} />
+            {row.name}
+          </td>
           <td>{row.phones && row.phones.length ? row.phones[0].number : ""}</td>
           <td>
             {row.emails && row.emails.length ? row.emails[0].address : ""}
