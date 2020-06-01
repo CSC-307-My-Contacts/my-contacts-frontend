@@ -240,7 +240,7 @@ class ContactList extends React.Component {
   }
 
   render() {
-    const { logout, deleteContact, importCsv } = this.props;
+    const { logout, deleteContact, importCsv, loading } = this.props;
     const {
       contact,
       contactSearch,
@@ -292,6 +292,13 @@ class ContactList extends React.Component {
           return null;
         }
       }
+    );
+
+    const loadingPage = (
+      <td colSpan="4" className="text-center text-muted bg-light p-3">
+        <span className="h3 text-uppercase">Loading</span>
+        <div className="spinner-border ml-2" />
+      </td>
     );
 
     return (
@@ -380,7 +387,7 @@ class ContactList extends React.Component {
                       <th>Labels</th>
                     </tr>
                   </thead>
-                  <tbody>{rows}</tbody>
+                  <tbody>{loading ? loadingPage : rows}</tbody>
                 </Table>
               </div>
             </main>

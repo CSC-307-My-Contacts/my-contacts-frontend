@@ -21,6 +21,7 @@ class App extends Component {
   LOGGED_OUT_STATE = {
     token: false,
     contacts: [],
+    loading: false,
   };
 
   constructor(props) {
@@ -58,6 +59,7 @@ class App extends Component {
   }
 
   contactsRequest() {
+    this.setState({ loading: true });
     axios
       .get(this.API_ROOT, {
         headers: { token: this.state.token },
@@ -65,7 +67,7 @@ class App extends Component {
       .then((res) => {
         console.log(res);
         const contacts = res.data.contacts;
-        this.setState({ contacts: contacts });
+        this.setState({ contacts: contacts, loading: false });
       })
       .catch(function (error) {
         //Not handling the error. Just logging into the console.
@@ -236,6 +238,7 @@ class App extends Component {
             logout={this.logout}
             deleteContact={this.deleteContact}
             importCsv={this.importCsv}
+            loading={this.state.loading}
           />
         </Switch>
       </Router>
