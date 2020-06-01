@@ -135,7 +135,7 @@ class App extends Component {
     data.append("_id", contact._id);
     data.append("file", image, image.name);
     axios
-      .post(this.API_ROOT + "image", data, {
+      .post(this.API_ROOT + "img", data, {
         headers: { token: this.state.token },
       })
       .then((res) => {
