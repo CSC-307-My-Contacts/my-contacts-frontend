@@ -18,6 +18,15 @@ class ContactForm extends Component {
       labels: [],
     },
     label_edit: "",
+    imageFile: null,
+  };
+
+  onFileChangeHandler = (event) => {
+    console.log(event.target.files[0]);
+    this.setState({
+      imageFile: event.target.files[0],
+      loaded: 0,
+    });
   };
 
   handleChange = (event) => {
@@ -189,7 +198,6 @@ class ContactForm extends Component {
           </Form.Group>
 
           <Card bg="light" className="mb-3">
-            <Card.Header>Contact Image</Card.Header>
             <Card.Body>
               <Media>
                 <div className="d-table pr-3 border-right">
@@ -197,14 +205,18 @@ class ContactForm extends Component {
                   <span className="text-muted text-center">current image</span>
                 </div>
                 <div className="px-3">
-                  <Form.Control type="file" name="file" />
+                  <h5 className="mb-3">Replace Image</h5>
+                  <Form.Control
+                    type="file"
+                    name="file"
+                    onChange={this.onFileChangeHandler}
+                  />
                   <small className="form-text text-muted mb-2">
                     Select an image for the contact (*.png, *.jpg, *.gif,
                     *.svg). <br />
                     Note that the current image will not be updated until the
                     contact is saved.
                   </small>
-                  <Button variant="outline-secondary">Upload</Button>
                 </div>
               </Media>
             </Card.Body>
@@ -285,8 +297,10 @@ class ContactForm extends Component {
               size="lg"
               block
               onClick={() => {
-                this.props.saveContact(this.state.contact, () =>
-                  this.props.history.push("/")
+                this.props.saveContact(
+                  this.state.contact,
+                  this.state.imageFile,
+                  () => this.props.history.push("/")
                 );
               }}
             >

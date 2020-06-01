@@ -130,6 +130,24 @@ class App extends Component {
       });
   }
 
+  contactImageRequest(contact, image, callback) {
+    const data = new FormData();
+    data.append("_id", contact._id);
+    data.append("file", image, image.name);
+    axios
+      .post(this.API_ROOT + "image", data, {
+        headers: { token: this.state.token },
+      })
+      .then((res) => {
+        if (res.status === 200) {
+          callback(res.data.contact);
+        }
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+  }
+
   importCsv(data) {
     this.importCsvRequest(data, () => {});
   }
@@ -167,19 +185,31 @@ class App extends Component {
     });
   }
 
-  saveContact(contact, callback) {
+  saveContact(contact, image, callback) {
     this.saveContactRequest(contact, (c) => {
       console.log(c);
-      const contacts = this.state.contacts;
-      this.setState({
+      this.changeContactState(c);
+      if (image) {
+        this.contactImageRequest(c, image, (ci) => {
+          this.changeContactState(ci);
+          callback();
+        });
+      } else {
+        callback();
+      }
+    });
+  }
+
+  changeContactState(contact) {
+    this.setState((state) => {
+      return {
         contacts: [
-          ...contacts.filter((con) => {
-            return con._id !== c._id;
+          ...state.contacts.filter((c) => {
+            return c._id !== contact._id;
           }),
-          c,
+          contact,
         ],
-      });
-      callback();
+      };
     });
   }
 

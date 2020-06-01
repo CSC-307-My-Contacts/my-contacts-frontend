@@ -273,10 +273,12 @@ class ContactList extends React.Component {
     );
 
     const loadingPage = (
-      <td colSpan="4" className="text-center text-muted bg-light p-3">
-        <span className="h3 text-uppercase">Loading</span>
-        <div className="spinner-border ml-2" />
-      </td>
+      <tr>
+        <td colSpan="4" className="text-center text-muted bg-light p-3">
+          <span className="h3 text-uppercase">Loading</span>
+          <div className="spinner-border ml-2" />
+        </td>
+      </tr>
     );
 
     return (
