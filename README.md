@@ -1,4 +1,4 @@
-# My Contacts App (Front End) [![Build Status](https://travis-ci.org/CSC-307-My-Contacts/my-contacts-frontend.svg?branch=develop)](https://travis-ci.org/CSC-307-My-Contacts/my-contacts)
+# My Contacts App (Front End) [![Build Status](https://travis-ci.org/CSC-307-My-Contacts/my-contacts-frontend.svg?branch=develop)](https://travis-ci.org/CSC-307-My-Contacts/my-contacts-frontend)
 
 __CSC 307 Project:__ Alex, Bailey, Ryan, Yogi
 
@@ -21,6 +21,12 @@ For development run `npm start` from the react-frontend directrory.
 $ cd react-frontend
 $ npm start
 ```
+
+## Continuos Integration
+
+### Build Status: [![Build Status](https://travis-ci.org/CSC-307-My-Contacts/my-contacts-frontend.svg?branch=develop)](https://travis-ci.org/CSC-307-My-Contacts/my-contacts-frontend)
+
+[view more details](https://travis-ci.org/CSC-307-My-Contacts/my-contacts-frontend)
 
 ## Style Guide
 
