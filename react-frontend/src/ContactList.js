@@ -9,6 +9,9 @@ import Navbar from "react-bootstrap/Navbar";
 import Form from "react-bootstrap/Form";
 import Nav from "react-bootstrap/Nav";
 import Badge from "react-bootstrap/Badge";
+import Media from "react-bootstrap/Media";
+import MediaBody from "react-bootstrap/Media";
+import ContactImage from "./ContactImage";
 
 const UploadIcon = () => {
   return (
@@ -55,16 +58,24 @@ const ContactViewModal = withRouter((props) => {
   return (
     <Modal show={true} onHide={closeContactView} centered="true">
       <Modal.Header closeButton>
-        <Modal.Title>
-          {contact.name}
-          <span className="mx-2" />
-          <LabelList labels={contact.labels} />
-        </Modal.Title>
+        <Modal.Title>{contact.name}</Modal.Title>
       </Modal.Header>
+      {contact.labels && contact.labels.length && (
+        <Modal.Body className="modal-border">
+          <LabelList labels={contact.labels} />
+        </Modal.Body>
+      )}
       <Modal.Body>
-        <strong>Email Address:</strong> {emails}
-        <hr />
-        <strong>Phone Number:</strong> {phones}
+        <Media>
+          <ContactImage image={contact.image} className="modal-image mr-3" />
+          <MediaBody>
+            <div>
+              <strong>Email Address:</strong> {emails}
+              <hr />
+              <strong>Phone Number:</strong> {phones}
+            </div>
+          </MediaBody>
+        </Media>
       </Modal.Body>
       <Modal.Footer>
         <Button
@@ -207,7 +218,7 @@ class ContactList extends React.Component {
   }
 
   render() {
-    const { logout, deleteContact, importCsv } = this.props;
+    const { logout, deleteContact, importCsv, loading } = this.props;
     const {
       contact,
       contactSearch,
@@ -224,7 +235,10 @@ class ContactList extends React.Component {
           }}
           className="pointer"
         >
-          <td>{row.name}</td>
+          <td>
+            <ContactImage image={row.image} className="table-image mr-3" />
+            {row.name}
+          </td>
           <td>{row.phones && row.phones.length ? row.phones[0].number : ""}</td>
           <td>
             {row.emails && row.emails.length ? row.emails[0].address : ""}
@@ -256,6 +270,15 @@ class ContactList extends React.Component {
           return null;
         }
       }
+    );
+
+    const loadingPage = (
+      <tr>
+        <td colSpan="4" className="text-center text-muted bg-light p-3">
+          <span className="h3 text-uppercase">Loading</span>
+          <div className="spinner-border ml-2" />
+        </td>
+      </tr>
     );
 
     return (
@@ -344,7 +367,7 @@ class ContactList extends React.Component {
                       <th>Labels</th>
                     </tr>
                   </thead>
-                  <tbody>{rows}</tbody>
+                  <tbody>{loading ? loadingPage : rows}</tbody>
                 </Table>
               </div>
             </main>

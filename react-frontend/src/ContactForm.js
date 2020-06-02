@@ -4,6 +4,9 @@ import Container from "react-bootstrap/Container";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 import Row from "react-bootstrap/Row";
+import Card from "react-bootstrap/Card";
+import Media from "react-bootstrap/Media";
+import ContactImage from "./ContactImage";
 
 class ContactForm extends Component {
   state = {
@@ -15,6 +18,15 @@ class ContactForm extends Component {
       labels: [],
     },
     label_edit: "",
+    imageFile: null,
+  };
+
+  onFileChangeHandler = (event) => {
+    console.log(event.target.files[0]);
+    this.setState({
+      imageFile: event.target.files[0],
+      loaded: 0,
+    });
   };
 
   handleChange = (event) => {
@@ -80,7 +92,7 @@ class ContactForm extends Component {
   }
 
   render() {
-    const { name, emails, phones, labels } = this.state.contact;
+    const { name, emails, phones, labels, image } = this.state.contact;
 
     const emailFields = emails.map((email, index) => {
       return (
@@ -184,6 +196,32 @@ class ContactForm extends Component {
               onChange={this.handleChange}
             />
           </Form.Group>
+
+          <Card bg="light" className="mb-3">
+            <Card.Body>
+              <Media>
+                <div className="d-table pr-3 border-right">
+                  <ContactImage image={image} className="modal-image d-block" />
+                  <span className="text-muted text-center">current image</span>
+                </div>
+                <div className="px-3">
+                  <h5 className="mb-3">Replace Image</h5>
+                  <Form.Control
+                    type="file"
+                    name="file"
+                    onChange={this.onFileChangeHandler}
+                  />
+                  <small className="form-text text-muted mb-2">
+                    Select an image for the contact (*.png, *.jpg, *.gif,
+                    *.svg). <br />
+                    Note that the current image will not be updated until the
+                    contact is saved.
+                  </small>
+                </div>
+              </Media>
+            </Card.Body>
+          </Card>
+
           <hr />
           <Form.Group className="mb-3">
             <div>
@@ -259,8 +297,10 @@ class ContactForm extends Component {
               size="lg"
               block
               onClick={() => {
-                this.props.saveContact(this.state.contact, () =>
-                  this.props.history.push("/")
+                this.props.saveContact(
+                  this.state.contact,
+                  this.state.imageFile,
+                  () => this.props.history.push("/")
                 );
               }}
             >

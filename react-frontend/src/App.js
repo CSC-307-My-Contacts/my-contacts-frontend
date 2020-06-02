@@ -21,6 +21,7 @@ class App extends Component {
   LOGGED_OUT_STATE = {
     token: false,
     contacts: [],
+    loading: false,
   };
 
   constructor(props) {
@@ -58,6 +59,7 @@ class App extends Component {
   }
 
   contactsRequest() {
+    this.setState({ loading: true });
     axios
       .get(this.API_ROOT, {
         headers: { token: this.state.token },
@@ -65,7 +67,7 @@ class App extends Component {
       .then((res) => {
         console.log(res);
         const contacts = res.data.contacts;
-        this.setState({ contacts: contacts });
+        this.setState({ contacts: contacts, loading: false });
       })
       .catch(function (error) {
         //Not handling the error. Just logging into the console.
@@ -128,6 +130,24 @@ class App extends Component {
       });
   }
 
+  contactImageRequest(contact, image, callback) {
+    const data = new FormData();
+    data.append("_id", contact._id);
+    data.append("file", image, image.name);
+    axios
+      .post(this.API_ROOT + "img", data, {
+        headers: { token: this.state.token },
+      })
+      .then((res) => {
+        if (res.status === 200) {
+          callback(res.data.contact);
+        }
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+  }
+
   importCsv(data) {
     this.importCsvRequest(data, () => {});
   }
@@ -165,19 +185,31 @@ class App extends Component {
     });
   }
 
-  saveContact(contact, callback) {
+  saveContact(contact, image, callback) {
     this.saveContactRequest(contact, (c) => {
       console.log(c);
-      const contacts = this.state.contacts;
-      this.setState({
+      this.changeContactState(c);
+      if (image) {
+        this.contactImageRequest(c, image, (ci) => {
+          this.changeContactState(ci);
+          callback();
+        });
+      } else {
+        callback();
+      }
+    });
+  }
+
+  changeContactState(contact) {
+    this.setState((state) => {
+      return {
         contacts: [
-          ...contacts.filter((con) => {
-            return con._id !== c._id;
+          ...state.contacts.filter((c) => {
+            return c._id !== contact._id;
           }),
-          c,
+          contact,
         ],
-      });
-      callback();
+      };
     });
   }
 
@@ -236,6 +268,7 @@ class App extends Component {
             logout={this.logout}
             deleteContact={this.deleteContact}
             importCsv={this.importCsv}
+            loading={this.state.loading}
           />
         </Switch>
       </Router>
