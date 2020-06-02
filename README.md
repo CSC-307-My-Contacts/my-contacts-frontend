@@ -28,6 +28,9 @@ $ npm start
 
 [view more details](https://travis-ci.org/CSC-307-My-Contacts/my-contacts-frontend)
 
+## Documentation
+ - [UI Prototype](https://www.figma.com/file/gYEXAMvHRGv5uwydDPbMMg/Landing-Page-Contact-Details) (updated: 5/6/20)
+
 ## Style Guide
 
 * Prettier
