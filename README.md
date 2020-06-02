@@ -30,6 +30,9 @@ $ npm start
 
 ## Documentation
  - [UI Prototype](https://www.figma.com/file/gYEXAMvHRGv5uwydDPbMMg/Landing-Page-Contact-Details) (updated: 5/6/20)
+ - [Class Diagram](https://github.com/CSC-307-My-Contacts/my-contacts-frontend/wiki/Class-Diagram) (updated: 5/13/20)
+ - [Use Case Diagram](https://github.com/CSC-307-My-Contacts/my-contacts-frontend/wiki/Use-Case-Diagram) (updated: 5/21/20)
+ - [API Specs](https://github.com/CSC-307-My-Contacts/my-contacts-frontend/blob/develop/docs/API-Specs.md) (updated: 6/1/20)
 
 ## Style Guide
 
