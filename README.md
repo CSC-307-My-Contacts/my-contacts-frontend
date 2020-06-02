@@ -36,4 +36,4 @@ $ npm start
 
 ## Style Guide
 
-* Prettier
+For the front-end of the project [Prettier](https://prettier.io/docs/en/install.html) is used to style the code. When running `npm install` Prettier will be setup.
