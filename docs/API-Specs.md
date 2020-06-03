@@ -115,6 +115,25 @@ Status-Code: 200
 }
 ```
 
-### `GET` http://{APIROOT}/img/<filename>
+### `GET` http://{APIROOT}/img/\<filename\>
 - No headers or body needed
 - If the file system contains the image, serve it
+    
+### `POST` http://{APIROOT}/img
+```JavaScript
+header: {
+    token: "user-token"
+},
+files: {
+    file: Image-File
+},
+form: {
+    _id: "id"
+}
+```
+```JavaScript
+Status-Code: 200
+{
+    contact: /* SEE CONTACT */
+}
+```

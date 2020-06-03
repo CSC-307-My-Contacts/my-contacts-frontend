@@ -9,21 +9,47 @@ import Navbar from "react-bootstrap/Navbar";
 import Form from "react-bootstrap/Form";
 import Nav from "react-bootstrap/Nav";
 import Badge from "react-bootstrap/Badge";
+import Media from "react-bootstrap/Media";
+import MediaBody from "react-bootstrap/Media";
+import ContactImage from "./ContactImage";
+
+const UploadIcon = () => {
+  return (
+    <svg
+      className="bi bi-cloud-upload"
+      width="1em"
+      height="1em"
+      viewBox="0 0 16 16"
+      fill="currentColor"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path d="M4.887 6.2l-.964-.165A2.5 2.5 0 1 0 3.5 11H6v1H3.5a3.5 3.5 0 1 1 .59-6.95 5.002 5.002 0 1 1 9.804 1.98A2.501 2.501 0 0 1 13.5 12H10v-1h3.5a1.5 1.5 0 0 0 .237-2.981L12.7 7.854l.216-1.028a4 4 0 1 0-7.843-1.587l-.185.96z" />
+      <path
+        fillRule="evenodd"
+        d="M5 8.854a.5.5 0 0 0 .707 0L8 6.56l2.293 2.293A.5.5 0 1 0 11 8.146L8.354 5.5a.5.5 0 0 0-.708 0L5 8.146a.5.5 0 0 0 0 .708z"
+      />
+      <path
+        fillRule="evenodd"
+        d="M8 6a.5.5 0 0 1 .5.5v8a.5.5 0 0 1-1 0v-8A.5.5 0 0 1 8 6z"
+      />
+    </svg>
+  );
+};
 
 const ContactViewModal = withRouter((props) => {
   const { contact, closeContactView, deleteContact, history } = props;
 
-  const emails = contact.emails.map((row, index) => {
+  const emails = (contact.emails || []).map((row, index) => {
     return (
-      <div className="mb-1">
+      <div className="mb-1" key={index}>
         {row.address} <span className="text-muted">({row.type})</span>
       </div>
     );
   });
 
-  const phones = contact.phones.map((row, index) => {
+  const phones = (contact.phones || []).map((row, index) => {
     return (
-      <div className="mb-1">
+      <div className="mb-1" key={index}>
         {row.number} <span className="text-muted">({row.type})</span>
       </div>
     );
@@ -32,16 +58,24 @@ const ContactViewModal = withRouter((props) => {
   return (
     <Modal show={true} onHide={closeContactView} centered="true">
       <Modal.Header closeButton>
-        <Modal.Title>
-          {contact.name}
-          <span className="mx-2" />
-          <LabelList labels={contact.labels} />
-        </Modal.Title>
+        <Modal.Title>{contact.name}</Modal.Title>
       </Modal.Header>
+      {contact.labels && contact.labels.length && (
+        <Modal.Body className="modal-border">
+          <LabelList labels={contact.labels} />
+        </Modal.Body>
+      )}
       <Modal.Body>
-        <strong>Email Address:</strong> {emails}
-        <hr />
-        <strong>Phone Number:</strong> {phones}
+        <Media>
+          <ContactImage image={contact.image} className="modal-image mr-3" />
+          <MediaBody>
+            <div>
+              <strong>Email Address:</strong> {emails}
+              <hr />
+              <strong>Phone Number:</strong> {phones}
+            </div>
+          </MediaBody>
+        </Media>
       </Modal.Body>
       <Modal.Footer>
         <Button
@@ -117,7 +151,7 @@ class ImportModal extends React.Component {
 }
 
 const LabelList = (props) => {
-  const labels = props.labels.map((label, index) => {
+  const labels = (props.labels || []).map((label, index) => {
     return (
       <Badge key={index} variant="dark" className="mr-2">
         {label}
@@ -132,6 +166,7 @@ class ContactList extends React.Component {
     contact: false,
     showImportModal: false,
     contactSearch: "",
+    selectedLabel: null,
   };
 
   constructor(props) {
@@ -155,20 +190,41 @@ class ContactList extends React.Component {
   };
 
   getDisplayContacts(value) {
-    return this.state.contactSearch
+    if (!this.state.contactSearch && !this.state.selectedLabel) {
+      return this.props.contacts;
+    }
+    let contacts = this.state.contactSearch
       ? this.props.contacts.filter((c) => {
-          return (
-            c.name.toUpperCase().includes(value.toUpperCase()) ||
-            c.email.toUpperCase().includes(value.toUpperCase()) ||
-            c.phone.toUpperCase().includes(value.toUpperCase())
-          );
+          return c.name.toUpperCase().includes(value.toUpperCase());
         })
       : this.props.contacts;
+    return this.state.selectedLabel
+      ? contacts.filter((c) => {
+          return (c.labels || []).indexOf(this.state.selectedLabel) !== -1;
+        })
+      : contacts;
+  }
+
+  getLabelList(contacts) {
+    return contacts
+      .reduce((list, contact) => list.concat(contact.labels), [])
+      .filter((v, i, a) => a.indexOf(v) === i);
+  }
+
+  handelLabelClick(label) {
+    this.setState((state) => {
+      return { selectedLabel: state.selectedLabel === label ? null : label };
+    });
   }
 
   render() {
-    const { logout, deleteContact, importCsv } = this.props;
-    const { contact, contactSearch, showImportModal } = this.state;
+    const { logout, deleteContact, importCsv, loading } = this.props;
+    const {
+      contact,
+      contactSearch,
+      showImportModal,
+      selectedLabel,
+    } = this.state;
 
     const rows = this.getDisplayContacts(contactSearch).map((row, index) => {
       return (
@@ -179,9 +235,14 @@ class ContactList extends React.Component {
           }}
           className="pointer"
         >
-          <td>{row.name}</td>
-          <td>{row.phones[0].number || ""}</td>
-          <td>{row.emails[0].address || ""}</td>
+          <td>
+            <ContactImage image={row.image} className="table-image mr-3" />
+            {row.name}
+          </td>
+          <td>{row.phones && row.phones.length ? row.phones[0].number : ""}</td>
+          <td>
+            {row.emails && row.emails.length ? row.emails[0].address : ""}
+          </td>
           <td>
             <LabelList labels={row.labels} />
           </td>
@@ -189,12 +250,43 @@ class ContactList extends React.Component {
       );
     });
 
+    const labels = this.getLabelList(this.props.contacts).map(
+      (label, index) => {
+        if (label) {
+          return (
+            <Nav.Item key={index}>
+              <Nav.Link className="py-1">
+                <Button
+                  variant={label === selectedLabel ? "dark" : "outline-dark"}
+                  size="sm"
+                  onClick={() => this.handelLabelClick(label)}
+                >
+                  {label}
+                </Button>
+              </Nav.Link>
+            </Nav.Item>
+          );
+        } else {
+          return null;
+        }
+      }
+    );
+
+    const loadingPage = (
+      <tr>
+        <td colSpan="4" className="text-center text-muted bg-light p-3">
+          <span className="h3 text-uppercase">Loading</span>
+          <div className="spinner-border ml-2" />
+        </td>
+      </tr>
+    );
+
     return (
       <>
         <Navbar
           variant="dark"
           bg="dark"
-          className="sticky-top flex-md-nowrap p-0"
+          className="fixed-top flex-md-nowrap p-0"
         >
           <Navbar.Brand className="col-sm-3 col-md-2 mr-0">
             <img
@@ -208,7 +300,7 @@ class ContactList extends React.Component {
           </Navbar.Brand>
         </Navbar>
         <Container fluid>
-          <Row>
+          <Row className="mt-5">
             <nav className="col-md-2 d-none d-md-block bg-light sidebar">
               <div className="sidebar-sticky">
                 <div className="flex-md-nowrap px-3">
@@ -224,23 +316,28 @@ class ContactList extends React.Component {
                 </div>
                 <hr />
                 <Nav className="flex-column">
-                  <Nav.Item className="px-3">
+                  <span className="nav-link">
                     <Link to={"/create"} style={{ textDecoration: "none" }}>
                       <Button block variant="primary">
                         New Contact
                       </Button>
                     </Link>
-                  </Nav.Item>
+                  </span>
                   <Nav.Item>
                     <Nav.Link
                       onClick={() => {
                         this.setState({ showImportModal: true });
                       }}
                     >
-                      Upload Contacts CSV
+                      <UploadIcon /> Upload Contacts CSV
                     </Nav.Link>
                   </Nav.Item>
                 </Nav>
+                <hr />
+                <h6 className="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
+                  Labels
+                </h6>
+                <Nav className="flex-column">{labels}</Nav>
                 <footer className="footer mb-3 mx-2">
                   <Nav className="flex-column">
                     <Nav.Item>
@@ -270,7 +367,7 @@ class ContactList extends React.Component {
                       <th>Labels</th>
                     </tr>
                   </thead>
-                  <tbody>{rows}</tbody>
+                  <tbody>{loading ? loadingPage : rows}</tbody>
                 </Table>
               </div>
             </main>
