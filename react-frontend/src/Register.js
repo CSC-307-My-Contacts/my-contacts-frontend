@@ -24,7 +24,10 @@ class Register extends Component {
   };
 
   register = () => {
-    if (this.state.password1 === this.state.password2) {
+    if (
+      this.state.password1 === this.state.password2 &&
+      this.state.password1 !== ""
+    ) {
       this.setState({ match: true, waiting: true });
       this.props.registerUser(this.state.username, this.state.password1, () => {
         this.setState({ usernameOk: false, waiting: false });
@@ -103,7 +106,7 @@ class Register extends Component {
               isInvalid={!this.state.match}
             />
             <Form.Control.Feedback type="invalid">
-              Passwords must match
+              Passwords must match and be non-empty
             </Form.Control.Feedback>
           </Form.Group>
           <RegisterButton />
