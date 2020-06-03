@@ -115,7 +115,7 @@ Status-Code: 200
 }
 ```
 
-### `GET` http://{APIROOT}/img/<filename>
+### `GET` http://{APIROOT}/img/\<filename\>
 - No headers or body needed
 - If the file system contains the image, serve it
     
