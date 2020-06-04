@@ -1,6 +1,5 @@
 import React from "react";
 import { Link, withRouter } from "react-router-dom";
-import Modal from "react-bootstrap/Modal";
 import Button from "react-bootstrap/Button";
 import Table from "react-bootstrap/Table";
 import Container from "react-bootstrap/Container";
@@ -8,10 +7,10 @@ import Row from "react-bootstrap/Row";
 import Navbar from "react-bootstrap/Navbar";
 import Form from "react-bootstrap/Form";
 import Nav from "react-bootstrap/Nav";
-import Badge from "react-bootstrap/Badge";
-import Media from "react-bootstrap/Media";
-import MediaBody from "react-bootstrap/Media";
 import ContactImage from "./ContactImage";
+import ImportModal from "./ImportModal";
+import DetailedContactModal from "./DetailedContactModal";
+import LabelList from "./LabelList";
 
 const UploadIcon = () => {
   return (
@@ -34,131 +33,6 @@ const UploadIcon = () => {
       />
     </svg>
   );
-};
-
-const ContactViewModal = withRouter((props) => {
-  const { contact, closeContactView, deleteContact, history } = props;
-
-  const emails = (contact.emails || []).map((row, index) => {
-    return (
-      <div className="mb-1" key={index}>
-        {row.address} <span className="text-muted">({row.type})</span>
-      </div>
-    );
-  });
-
-  const phones = (contact.phones || []).map((row, index) => {
-    return (
-      <div className="mb-1" key={index}>
-        {row.number} <span className="text-muted">({row.type})</span>
-      </div>
-    );
-  });
-
-  return (
-    <Modal show={true} onHide={closeContactView} centered="true">
-      <Modal.Header closeButton>
-        <Modal.Title>{contact.name}</Modal.Title>
-      </Modal.Header>
-      {contact.labels && contact.labels.length && (
-        <Modal.Body className="modal-border">
-          <LabelList labels={contact.labels} />
-        </Modal.Body>
-      )}
-      <Modal.Body>
-        <Media>
-          <ContactImage image={contact.image} className="modal-image mr-3" />
-          <MediaBody>
-            <div>
-              <strong>Email Address:</strong> {emails}
-              <hr />
-              <strong>Phone Number:</strong> {phones}
-            </div>
-          </MediaBody>
-        </Media>
-      </Modal.Body>
-      <Modal.Footer>
-        <Button
-          variant="secondary"
-          onClick={() => history.push("/edit/" + contact._id)}
-        >
-          Edit
-        </Button>
-        <Button
-          variant="danger"
-          onClick={() => {
-            deleteContact(contact._id, closeContactView);
-          }}
-        >
-          Delete
-        </Button>
-      </Modal.Footer>
-    </Modal>
-  );
-});
-
-class ImportModal extends React.Component {
-  state = {
-    selectedFile: null,
-  };
-
-  onChangeHandler = (event) => {
-    console.log(event.target.files[0]);
-    this.setState({
-      selectedFile: event.target.files[0],
-      loaded: 0,
-    });
-  };
-
-  onClickHandler = () => {
-    const data = new FormData();
-    data.append("file", this.state.selectedFile, this.state.selectedFile.name);
-    this.props.importCsv(data);
-  };
-
-  render() {
-    const { closeImport } = this.props;
-
-    return (
-      <Modal show={true} onHide={closeImport} centered="true">
-        <Modal.Header closeButton>
-          <Modal.Title>Import Contacts CSV</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <Form>
-            <p className="text-muted">
-              To import contacts from an exterior contact service select a .csv
-              file containing the desired contacts.
-            </p>
-            <Form.Control
-              type="file"
-              name="file"
-              onChange={this.onChangeHandler}
-            />
-          </Form>
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="outline-secondary" onClick={closeImport}>
-            Cancel
-          </Button>
-          <Button variant="primary" onClick={this.onClickHandler}>
-            Import
-          </Button>
-        </Modal.Footer>
-      </Modal>
-    );
-  }
-}
-
-const LabelList = (props) => {
-  const labels = (props.labels || []).map((label, index) => {
-    return (
-      <Badge key={index} variant="dark" className="mr-2">
-        {label}
-      </Badge>
-    );
-  });
-  return <>{labels}</>;
 };
 
 class ContactList extends React.Component {
@@ -375,7 +249,7 @@ class ContactList extends React.Component {
         </Container>
 
         {contact !== false && (
-          <ContactViewModal
+          <DetailedContactModal
             contact={contact}
             closeContactView={this.closeContactView}
             deleteContact={deleteContact}
