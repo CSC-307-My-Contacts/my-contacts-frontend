@@ -160,7 +160,7 @@ class ContactList extends React.Component {
         <Navbar
           variant="dark"
           bg="dark"
-          className="fixed-top flex-md-nowrap p-0"
+          className="fixed-top flex-md-nowrap p-0  justify-content-between"
         >
           <Navbar.Brand className="col-sm-3 col-md-2 mr-0">
             <img
@@ -172,6 +172,14 @@ class ContactList extends React.Component {
             />{" "}
             My Contacts
           </Navbar.Brand>
+
+          <ul className="navbar-nav px-3">
+            <li className="nav-item text-nowrap">
+              <a className="nav-link" onClick={logout} href="/login">
+                Logout
+              </a>
+            </li>
+          </ul>
         </Navbar>
         <Container fluid>
           <Row className="mt-5">
@@ -212,19 +220,6 @@ class ContactList extends React.Component {
                   Labels
                 </h6>
                 <Nav className="flex-column">{labels}</Nav>
-                <footer className="footer mb-3 mx-2">
-                  <Nav className="flex-column">
-                    <Nav.Item>
-                      <Button
-                        variant="link"
-                        className="nav-link text-muted"
-                        onClick={logout}
-                      >
-                        Logout
-                      </Button>
-                    </Nav.Item>
-                  </Nav>
-                </footer>
               </div>
             </nav>
             <main
