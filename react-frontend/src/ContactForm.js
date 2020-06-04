@@ -13,8 +13,8 @@ class ContactForm extends Component {
     type: "Create",
     contact: {
       name: "",
-      emails: [{ address: "", type: "none" }],
-      phones: [{ number: "", type: "none" }],
+      emails: [{ address: "", type: "None" }],
+      phones: [{ number: "", type: "None" }],
       labels: [],
     },
     label_edit: "",
@@ -94,6 +94,14 @@ class ContactForm extends Component {
   render() {
     const { name, emails, phones, labels, image } = this.state.contact;
 
+    const typeOption = (type) => {
+      if (["None", "Home", "Work", "Other"].includes(type)) {
+        return <option value="None">Type...</option>;
+      } else {
+        return <option value={type}>{type}</option>;
+      }
+    };
+
     const emailFields = emails.map((email, index) => {
       return (
         <div className="d-flex flex-md-nowrap mb-1" key={index}>
@@ -113,10 +121,10 @@ class ContactForm extends Component {
               this.handleListChange(event, "emails", index, "type")
             }
           >
-            <option value="none">Type...</option>
-            <option value="home">Home</option>
-            <option value="work">Work</option>
-            <option value="other">Other</option>
+            {typeOption(email.type)}
+            <option value="Home">Home</option>
+            <option value="Work">Work</option>
+            <option value="Other">Other</option>
           </select>
           <button
             aria-label="Close"
@@ -149,10 +157,10 @@ class ContactForm extends Component {
               this.handleListChange(event, "phones", index, "type")
             }
           >
-            <option value="none">Type...</option>
-            <option value="home">Home</option>
-            <option value="work">Work</option>
-            <option value="other">Other</option>
+            {typeOption(phone.type)}
+            <option value="Home">Home</option>
+            <option value="Work">Work</option>
+            <option value="Other">Other</option>
           </select>
           <button
             aria-label="Close"
