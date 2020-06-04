@@ -26,16 +26,21 @@ const DetailedContactModal = withRouter((props) => {
     );
   });
 
+  const labels =
+    contact.labels && contact.labels.length ? (
+      <Modal.Body className="modal-border">
+        <LabelList labels={contact.labels} />
+      </Modal.Body>
+    ) : (
+      <></>
+    );
+
   return (
     <Modal show={true} onHide={closeContactView} centered="true">
       <Modal.Header closeButton>
         <Modal.Title>{contact.name}</Modal.Title>
       </Modal.Header>
-      {contact.labels && contact.labels.length && (
-        <Modal.Body className="modal-border">
-          <LabelList labels={contact.labels} />
-        </Modal.Body>
-      )}
+      {labels}
       <Modal.Body>
         <Media>
           <ContactImage image={contact.image} className="modal-image mr-3" />
