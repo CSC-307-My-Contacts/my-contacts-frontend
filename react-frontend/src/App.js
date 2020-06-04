@@ -35,7 +35,7 @@ class App extends Component {
     this.registerUser = this.registerUser.bind(this);
     this.saveContact = this.saveContact.bind(this);
     this.deleteContact = this.deleteContact.bind(this);
-    this.importCsv = this.importCsvRequest.bind(this);
+    this.importCsv = this.importCsv.bind(this);
   }
 
   tokenRequest(type, username, password, callback) {
@@ -121,7 +121,7 @@ class App extends Component {
       })
       .then((res) => {
         if (res.status === 200) {
-          callback();
+          callback(res.data.contacts);
         }
       })
       .catch(function (error) {
@@ -149,7 +149,13 @@ class App extends Component {
   }
 
   importCsv(data) {
-    this.importCsvRequest(data, () => {});
+    this.importCsvRequest(data, (contacts) => {
+      this.setState((state) => {
+        return {
+          contacts: [...contacts, ...state.contacts],
+        };
+      });
+    });
   }
 
   deleteContact(id, callback) {
