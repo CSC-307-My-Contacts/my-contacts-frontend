@@ -10,6 +10,8 @@ The My Contacts web application provides users with a secure and intuitive inter
 
 ## Development Environment Setup
 
+For this project we use **npm** to manage packages. If you have it already on your computer, skip this section. Otherwise, go to  [https://nodejs.org/en/download/](https://nodejs.org/en/download/) and install it according to your operating system.
+
 To install dependencies run `npm install` from the react-frontend directrory. 
 
 ```bash
